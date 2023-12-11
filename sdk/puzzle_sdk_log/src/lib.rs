@@ -3,7 +3,7 @@ use std::fmt;
 use log::{Level, LevelFilter, SetLoggerError};
 
 extern "C" {
-	pub fn puzzle_log(level: u32, ptr: *const u8, len: u32);
+	fn puzzle_log(level: u32, ptr: *const u8, len: u32);
 	fn puzzle_log_flush();
 }
 
