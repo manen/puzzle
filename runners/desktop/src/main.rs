@@ -1,3 +1,18 @@
+use clap::Parser;
+use runners_common as runners;
+use std::{fs, path::PathBuf};
+
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+struct Cli {
+	path: PathBuf,
+}
+
 fn main() {
-	println!("Hello, world!");
+	pretty_env_logger::init();
+
+	let cli = Cli::parse();
+
+	let wasm = fs::read(&cli.path).expect("failed to read file");
+	runners::start(&wasm).expect("execution failed");
 }

@@ -1,4 +1,6 @@
 #[no_mangle]
 pub extern "C" fn puzzle_main() {
-	wasm_glue::hook();
+	puzzle_sdk_log::init().unwrap();
+
+	log::info!("hello world");
 }
