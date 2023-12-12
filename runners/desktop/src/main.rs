@@ -21,6 +21,9 @@ enum Cli {
 		/// rust target directory
 		#[arg(short, long)]
 		target_dir: Option<PathBuf>,
+		/// directories/files to watch, comma-separated
+		#[arg(short, long)]
+		watch: Option<String>,
 	},
 }
 
@@ -33,6 +36,7 @@ fn main() {
 		Cli::CargoWatch {
 			build_dir,
 			target_dir,
+			watch,
 		} => {
 			let build_dir = build_dir.unwrap_or_else(|| env::current_dir().unwrap());
 			let target_dir = target_dir.unwrap_or_else(|| build_dir.join("target"));
@@ -70,7 +74,17 @@ fn main() {
 			// be killed safely
 
 			let exit_code = Command::new(cargo_path)
-				.args(["watch", "--watch", build_dir.to_str().unwrap(), "-s", &cmd])
+				.args(
+					["watch", "--watch", build_dir.to_str().unwrap(), "-s", &cmd]
+						.into_iter()
+						.chain(
+							watch
+								.unwrap_or_else(|| build_dir.to_string_lossy().into_owned())
+								.split(',')
+								.map(AsRef::as_ref)
+								.flat_map(|x| ["--watch", x]),
+						),
+				)
 				.spawn()
 				.unwrap()
 				.wait()
