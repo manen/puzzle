@@ -1,6 +1,6 @@
 use clap::Parser;
 use std::{
-	env, fs, os,
+	env, fs,
 	path::{Path, PathBuf},
 	process::{self, Command},
 };
@@ -70,7 +70,7 @@ fn main() {
 			// be killed safely
 
 			let exit_code = Command::new(cargo_path)
-				.args(["watch", "-s", &cmd])
+				.args(["watch", "--watch", build_dir.to_str().unwrap(), "-s", &cmd])
 				.spawn()
 				.unwrap()
 				.wait()
