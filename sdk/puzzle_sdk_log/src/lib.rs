@@ -9,12 +9,8 @@ extern "C" {
 
 struct PuzzleLogger;
 impl log::Log for PuzzleLogger {
-	fn enabled(&self, metadata: &log::Metadata) -> bool {
-		if cfg!(debug_assertions) {
-			true
-		} else {
-			metadata.level() <= Level::Info
-		}
+	fn enabled(&self, _: &log::Metadata) -> bool {
+		true
 	}
 
 	fn log(&self, record: &log::Record) {
@@ -32,10 +28,6 @@ static LOGGER: PuzzleLogger = PuzzleLogger;
 
 pub fn init() -> Result<(), SetLoggerError> {
 	log::set_logger(&LOGGER)?;
-	if cfg!(debug_assertions) {
-		log::set_max_level(LevelFilter::Debug)
-	} else {
-		log::set_max_level(LevelFilter::Info)
-	}
+	log::set_max_level(LevelFilter::Trace);
 	Ok(())
 }
