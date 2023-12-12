@@ -1,6 +1,6 @@
 use std::fmt;
 
-use log::{Level, LevelFilter, SetLoggerError};
+use log::{LevelFilter, SetLoggerError};
 
 extern "C" {
 	fn puzzle_log(level: u32, ptr: *const u8, len: u32);

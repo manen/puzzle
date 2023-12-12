@@ -414,7 +414,7 @@ dependencies = [
  "clap",
  "log",
  "pretty_env_logger",
- "runners_common",
+ "wasmtime_common",
 ]
 
 [[package]]
@@ -918,17 +918,6 @@ name = "regex-syntax"
 version = "0.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c08c74e62047bb2de4ff487b251e4a92e24f48745648451635cec7d591162d9f"
-
-[[package]]
-name = "runners_common"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "log",
- "pretty_env_logger",
- "thiserror",
- "wasmtime",
-]
 
 [[package]]
 name = "rustc-demangle"
@@ -1459,6 +1448,16 @@ name = "wasmtime-wmemcheck"
 version = "15.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9b6060bc082cc32d9a45587c7640e29e3c7b89ada82677ac25d87850aaccb368"
+
+[[package]]
+name = "wasmtime_common"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "log",
+ "thiserror",
+ "wasmtime",
+]
 
 [[package]]
 name = "wast"

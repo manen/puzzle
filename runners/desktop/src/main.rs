@@ -1,5 +1,4 @@
 use clap::Parser;
-use runners_common as runners;
 use std::{fs, path::PathBuf};
 
 #[derive(Parser, Debug)]
@@ -14,5 +13,5 @@ fn main() {
 	let cli = Cli::parse();
 
 	let wasm = fs::read(&cli.path).expect("failed to read file");
-	runners::start(&wasm).expect("execution failed");
+	wasmtime_common::start(&wasm).expect("execution failed");
 }

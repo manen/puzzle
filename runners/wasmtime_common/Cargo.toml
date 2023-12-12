@@ -1,5 +1,5 @@
 [package]
-name = "runners_common"
+name = "wasmtime_common"
 version = "0.1.0"
 edition = "2021"
 
