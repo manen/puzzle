@@ -16,6 +16,11 @@ pub type Result<T> = std::result::Result<T, Error>;
 pub struct Runtime {
 	jigsaw: jigsaw::Runtime,
 }
+impl AsMut<jigsaw::Runtime> for Runtime {
+	fn as_mut(&mut self) -> &mut jigsaw::Runtime {
+		&mut self.jigsaw
+	}
+}
 
 pub fn start(wasm: &[u8]) -> Result<()> {
 	let engine = Engine::default();

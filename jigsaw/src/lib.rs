@@ -2,6 +2,9 @@ use bgfx_rs::bgfx::{self, DbgTextClearArgs, ResetArgs};
 use raw_window_handle::{HasRawWindowHandle, RawWindowHandle};
 use thiserror::Error;
 
+#[cfg(feature = "wasm")]
+pub mod wasm;
+
 const WIDTH: u32 = 1280;
 const HEIGHT: u32 = 720;
 
@@ -17,6 +20,10 @@ pub enum Error {
 	BgfxInit,
 	#[error("jigsaw is not initialized")]
 	Uninit,
+
+	#[cfg(feature = "wasm")]
+	#[error("wasmtime error: {0}")]
+	Wasmtime(#[from] wasmtime::Error),
 }
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -24,24 +31,17 @@ pub type Result<T> = std::result::Result<T, Error>;
 pub enum Runtime {
 	#[default]
 	Uninit,
-	Init {
-		old_size: (i32, i32),
-		glfw: glfw::Glfw,
-		window: glfw::PWindow,
-		events: glfw::GlfwReceiver<(f64, glfw::WindowEvent)>,
-	},
+	Init(RuntimeInit),
 }
+struct RuntimeInit {
+	old_size: (i32, i32),
+	glfw: glfw::Glfw,
+	window: glfw::PWindow,
+	events: glfw::GlfwReceiver<(f64, glfw::WindowEvent)>,
+}
+impl RuntimeInit {}
 impl Runtime {
-	pub fn start(&mut self) -> i32 {
-		match self.start_impl() {
-			Ok(_) => 0,
-			Err(err) => {
-				log::error!("{err}");
-				-1
-			}
-		}
-	}
-	fn start_impl(&mut self) -> Result<()> {
+	pub fn start(&mut self) -> Result<()> {
 		match self {
 			Runtime::Uninit => {
 				let mut glfw = glfw::init(glfw::fail_on_errors)?;
@@ -76,28 +76,15 @@ impl Runtime {
 
 				let old_size = window.get_framebuffer_size();
 
-				*self = Runtime::Init {
+				*self = Runtime::Init(RuntimeInit {
 					old_size,
 					glfw,
 					window,
 					events,
-				};
+				});
 				Ok(())
 			}
 			Runtime::Init { .. } => Err(Error::AlreadyInit),
-		}
-	}
-
-	pub fn width(&self) -> i32 {
-		match &self {
-			&Runtime::Uninit => -1,
-			&Runtime::Init { window, .. } => window.get_size().0,
-		}
-	}
-	pub fn height(&self) -> i32 {
-		match &self {
-			&Runtime::Uninit => -1,
-			&Runtime::Init { window, .. } => window.get_size().0,
 		}
 	}
 	pub fn debug_text(&mut self, x: u32, y: u32, msg: &str) -> i32 {
@@ -122,18 +109,18 @@ impl Runtime {
 	pub fn should_close(&self) -> Result<bool> {
 		match &self {
 			Runtime::Uninit => Err(Error::Uninit),
-			Runtime::Init { window, .. } => Ok(window.should_close()),
+			Runtime::Init(RuntimeInit { window, .. }) => Ok(window.should_close()),
 		}
 	}
 	pub fn frame(&mut self) -> Result<()> {
 		match self {
 			Runtime::Uninit => Err(Error::Uninit),
-			Runtime::Init {
+			Runtime::Init(RuntimeInit {
 				old_size,
 				glfw,
 				window,
 				events,
-			} => {
+			}) => {
 				glfw.poll_events();
 				for (_, event) in glfw::flush_messages(&events) {
 					if let glfw::WindowEvent::Key(glfw::Key::Escape, _, glfw::Action::Press, _) =
