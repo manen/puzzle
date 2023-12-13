@@ -10,4 +10,4 @@ anyhow = "1.0.75"
 log = "0.4.20"
 thiserror = "1.0.50"
 wasmtime = "15.0.1"
-jigsaw = { path = "../../jigsaw", features = ["wasm"] }
+jigsaw = { path = "../../jigsaw/jigsaw", features = ["wasm"] }

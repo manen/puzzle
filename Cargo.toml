@@ -1,7 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
-	"jigsaw",
+	"jigsaw/*",
 	"runners/*",
 	"sdk/*",
 	"apps/*"
