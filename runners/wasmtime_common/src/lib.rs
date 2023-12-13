@@ -36,13 +36,15 @@ pub fn start(wasm: &[u8]) -> Result<()> {
 
 	let puzzle_render = instance.get_typed_func::<(), ()>(&mut store, "puzzle_render")?;
 
-	match store.data().jigsaw {
+	match &store.data().jigsaw {
 		jigsaw::Runtime::Uninit => Ok(()),
-		jigsaw::Runtime::Init { .. } => {
-			while !store.data_mut().jigsaw.should_close()? {
-				store.data_mut().jigsaw.frame()?;
-				puzzle_render.call(&mut store, ())?;
-				store.data_mut().jigsaw.frame_post()?;
+		jigsaw::Runtime::Init(_) => {
+			{
+				while !store.data_mut().jigsaw.runtime()?.should_close() {
+					store.data_mut().jigsaw.runtime()?.frame();
+					puzzle_render.call(&mut store, ())?;
+					store.data_mut().jigsaw.runtime()?.frame_post();
+				}
 			}
 
 			store.data_mut().jigsaw.uninit()?;

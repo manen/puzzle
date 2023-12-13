@@ -27,7 +27,13 @@ pub fn jigsaw_debug_text<S: AsMut<Runtime>>(
 	let msg = str::from_utf8(unsafe { slice::from_raw_parts(ptr_native, len as usize) })
 		.expect("failed to convert puzzle_log message to str");
 
-	caller.data_mut().as_mut().debug_text(x, y, msg)
+	match caller.data_mut().as_mut().debug_text(x, y, msg) {
+		Ok(_) => 0,
+		Err(err) => {
+			log::warn!("{err}");
+			-1
+		}
+	}
 }
 
 pub trait LinkerExt {
