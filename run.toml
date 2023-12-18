@@ -1,0 +1,4 @@
+[scripts]
+watch = "cargo watch --watch runners/desktop --watch runners/wasmtime_common --watch jigsaw -s 'run dev'"
+dev = "cargo run --manifest-path runners/desktop/Cargo.toml -- cargo-watch -C apps/dev -t target --watch sdk/puzzle_sdk_log,sdk/jigsaw_sdk"
+install-desktop = "cargo install --path=runners/desktop"

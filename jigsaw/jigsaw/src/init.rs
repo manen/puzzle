@@ -1,5 +1,5 @@
 use crate::{Error, Result, RuntimeInit};
-use bgfx_rs::bgfx::{self};
+use bgfx_rs::bgfx;
 use raw_window_handle::{HasRawWindowHandle, RawWindowHandle};
 
 const WIDTH: u32 = 1280;
