@@ -10,8 +10,6 @@ pub extern "C" fn puzzle_main() {
 }
 
 fn main() -> anyhow::Result<()> {
-	jigsaw_sdk::start()?;
-
 	Ok(())
 }
 
@@ -24,7 +22,7 @@ pub extern "C" fn puzzle_render() {
 }
 
 fn render() -> anyhow::Result<()> {
-	jigsaw_sdk::debug_text(2, 2, "hello world")?;
+	log::info!("haiiii:3");
 
 	Ok(())
 }

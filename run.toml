@@ -1,4 +1,8 @@
 [scripts]
-watch = "cargo watch --watch runners/desktop --watch runners/wasmtime_common --watch jigsaw -s 'run dev'"
-dev = "cargo run --manifest-path runners/desktop/Cargo.toml -- cargo-watch -C apps/dev -t target --watch sdk/puzzle_sdk_log,sdk/jigsaw_sdk"
+build-desktop = "cargo build --manifest-path runners/desktop/Cargo.toml"
+build-dev = "cargo build --manifest-path apps/dev/Cargo.toml --target=wasm32-unknown-unknown"
+
+watch-all = "cargo watch --watch runners/desktop --watch runners/wasmtime_common -s 'cargo run --manifest-path runners/desktop/Cargo.toml -- cargo-watch -C apps/dev -t target --watch sdk/puzzle_sdk_log'"
+dev = "run build-dev && run build-desktop && target/debug/puzzle run target/wasm32-unknown-unknown/debug/dev.wasm"
+
 install-desktop = "cargo install --path=runners/desktop"

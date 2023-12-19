@@ -1,16 +1,10 @@
 use crate::{Result, Runtime};
-use jigsaw::wasm::LinkerExt;
 use std::{slice, str};
 use wasmtime::{Caller, Engine, Linker};
 
 macro_rules! auto_wrap {
 	($linker: ident, $name:expr => $block:block) => {
 		$linker.func_wrap("env", $name, |_: Caller<'_, Runtime>| $block)?;
-	};
-	($linker:ident, $name:expr => jigsaw $func:ident) => {
-		$linker.func_wrap("env", $name, |mut caller: Caller<'_, Runtime>| {
-			caller.data_mut().jigsaw.$func()
-		})?;
 	};
 }
 
@@ -37,8 +31,6 @@ pub fn linker(engine: &Engine) -> Result<Linker<Runtime>> {
 		},
 	)?;
 	auto_wrap!(linker, "puzzle_log_flush" => { log::logger().flush() });
-
-	linker.link_jigsaw()?;
 
 	Ok(linker)
 }

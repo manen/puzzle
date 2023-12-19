@@ -11,5 +11,4 @@ crate-type = ["cdylib"]
 [dependencies]
 log = "0.4.20"
 puzzle_sdk_log = { path = "../../sdk/puzzle_sdk_log" }
-jigsaw_sdk = { path = "../../sdk/jigsaw_sdk" }
 anyhow = "1.0.75"
