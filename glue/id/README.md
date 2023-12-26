@@ -2,6 +2,21 @@
 
 this module handles identification between the wasm application and the runner, performing a sort of handshake
 
+usage from wasm:
+
+```rs
+id::ensure_api_version()?;
+let runner: Runner = id::runner();
+```
+
+usage from wasmtime backend:
+
+```rs
+// wasmtime
+id::ensure_app_api_version(&mut store, &instance)?;
+let app: App = id::app(&mut store, &instance)?;
+```
+
 exposed to wasm:
 
 - `puzzle_id_api_version_major() -> u32`
