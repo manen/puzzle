@@ -13,6 +13,8 @@ pub enum RtError {
 	NoMemory,
 	#[error("memory.into_memory() failed")]
 	IntoMemory,
+	#[error("puzzle_id_name returned null. maybe your application didn't initialize id?")]
+	NameNull,
 	#[error("{0}")]
 	Utf8Error(#[from] str::Utf8Error),
 }
@@ -34,6 +36,9 @@ pub fn app<T>(mut store: &mut wasmtime::Store<T>, instance: &wasmtime::Instance)
 	let name_ptr: u32 = instance
 		.get_typed_func(&mut store, "puzzle_id_name")?
 		.call(&mut store, ())?;
+	if name_ptr == 0 {
+		return Err(RtError::NameNull);
+	}
 	let name = instance
 		.get_export(&mut store, "memory")
 		.ok_or(RtError::NoMemory)?
