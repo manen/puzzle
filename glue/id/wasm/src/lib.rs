@@ -18,9 +18,9 @@ macro_rules! app_auto {
 		::id::App {
 			name: ::std::borrow::Cow::Borrowed(env!("CARGO_PKG_NAME")),
 			version: (
-				id::__str_parse(env!("CARGO_PKG_VERSION_MAJOR")),
-				id::__str_parse(env!("CARGO_PKG_VERSION_MINOR")),
-				id::__str_parse(env!("CARGO_PKG_VERSION_PATCH")),
+				::id::__str_parse(env!("CARGO_PKG_VERSION_MAJOR")),
+				::id::__str_parse(env!("CARGO_PKG_VERSION_MINOR")),
+				::id::__str_parse(env!("CARGO_PKG_VERSION_PATCH")),
 			),
 			api_version: ::puzzle_common::API_VERSION,
 		}
