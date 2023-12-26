@@ -6,9 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-puzzle_log = { path = "../../glue/log/log", features = ["runtime"] }
-id = { path = "../../glue/id/id", features = ["runtime"] }
-anyhow = "1.0.75"
-log = { workspace = true }
-thiserror = "1.0.50"
-wasmtime = { workspace = true }
+puzzle_log = { workspace = true, features = ["runtime"] }
+id = { workspace = true, features = ["runtime"] }
+anyhow.workspace = true
+log.workspace = true
+thiserror.workspace = true
+wasmtime.workspace = true

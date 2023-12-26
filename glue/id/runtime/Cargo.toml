@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-puzzle_common = { path = "../../../common" }
+puzzle_common.workspace = true
 id_common = { path = "../common" }
-wasmtime = { workspace = true }
-thiserror = "1.0.52"
+wasmtime.workspace = true
+thiserror.workspace = true

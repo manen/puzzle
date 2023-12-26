@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.4.11", features = ["derive"] }
-log = "0.4.20"
+log.workspace = true
 pathsearch = "0.2.0"
 pretty_env_logger = "0.5.0"
-wasmtime_common = { path = "../wasmtime_common" }
+wasmtime_common.workspace = true

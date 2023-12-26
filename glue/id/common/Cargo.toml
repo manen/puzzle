@@ -5,4 +5,4 @@ edition = "2021"
 
 [dependencies]
 log.workspace = true
-thiserror = "1.0.52"
+thiserror.workspace = true

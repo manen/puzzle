@@ -8,7 +8,7 @@ runtime = ["dep:puzzle_log_runtime"]
 wasm = ["dep:puzzle_log_wasm"]
 
 [dependencies]
-log = { workspace = true }
-glue = { path = "../../common/common" }
+log.workspace = true
+glue.workspace = true
 puzzle_log_runtime = { path = "../runtime", optional = true }
 puzzle_log_wasm = { path = "../wasm", optional = true }
