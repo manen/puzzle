@@ -1,0 +1,14 @@
+[package]
+name = "puzzle_log"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+runtime = ["dep:puzzle_log_runtime"]
+wasm = ["dep:puzzle_log_wasm"]
+
+[dependencies]
+log = { workspace = true }
+glue = { path = "../../common/common" }
+puzzle_log_runtime = { path = "../runtime", optional = true }
+puzzle_log_wasm = { path = "../wasm", optional = true }

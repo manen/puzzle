@@ -1,13 +1,9 @@
 [package]
-name = "wasmtime_common"
+name = "puzzle_log_wasm"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-puzzle_log = { path = "../../glue/log/log", features = ["runtime"] }
-anyhow = "1.0.75"
 log = { workspace = true }
-thiserror = "1.0.50"
-wasmtime = { workspace = true }

@@ -1,20 +1,11 @@
-use crate::{Result, Runtime};
 use std::{slice, str};
-use wasmtime::{Caller, Engine, Linker};
+use wasmtime::Caller;
 
-macro_rules! auto_wrap {
-	($linker: ident, $name:expr => $block:block) => {
-		$linker.func_wrap("env", $name, |_: Caller<'_, Runtime>| $block)?;
-	};
-}
-
-pub fn linker(engine: &Engine) -> Result<Linker<Runtime>> {
-	let mut linker = Linker::new(engine);
-
+pub fn link<T>(linker: &mut wasmtime::Linker<T>) -> wasmtime::Result<()> {
 	linker.func_wrap(
 		"env",
 		"puzzle_log",
-		|mut caller: Caller<'_, Runtime>, level_num: u32, ptr_wasm: i32, len: u32| {
+		|mut caller: Caller<'_, T>, level_num: u32, ptr_wasm: i32, len: u32| {
 			let memory = caller
 				.get_export("memory")
 				.expect("memory is not exported from called")
@@ -30,7 +21,9 @@ pub fn linker(engine: &Engine) -> Result<Linker<Runtime>> {
 			log::log!(level, "{}", msg);
 		},
 	)?;
-	auto_wrap!(linker, "puzzle_log_flush" => { log::logger().flush() });
+	linker.func_wrap("env", "puzzle_log_flush", |_: Caller<'_, T>| {
+		log::logger().flush()
+	})?;
 
-	Ok(linker)
+	Ok(())
 }

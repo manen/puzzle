@@ -1,5 +1,9 @@
 # Created by .ignore support plugin (hsz.mobi)
 
+# codegen
+gen.*
+*.gen.*
+
 # rust
 /target
 

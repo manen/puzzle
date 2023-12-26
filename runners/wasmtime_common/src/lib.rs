@@ -1,7 +1,5 @@
-mod stdlib;
-
 use thiserror::Error;
-use wasmtime::{Engine, Module, Store};
+use wasmtime::{Engine, Linker, Module, Store};
 
 #[derive(Debug, Error)]
 pub enum Error {
@@ -19,7 +17,9 @@ pub fn start(wasm: &[u8]) -> Result<()> {
 
 	let mut store = Store::new(&engine, Runtime::default());
 
-	let linker = stdlib::linker(&engine)?;
+	let mut linker = Linker::new(&engine);
+	puzzle_log::link(&mut linker)?;
+
 	let instance = linker.instantiate(&mut store, &module)?;
 
 	let puzzle_main = instance.get_typed_func::<(), ()>(&mut store, "puzzle_main")?;
