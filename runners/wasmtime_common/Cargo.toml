@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 puzzle_log = { path = "../../glue/log/log", features = ["runtime"] }
+id = { path = "../../glue/id/id", features = ["runtime"] }
 anyhow = "1.0.75"
 log = { workspace = true }
 thiserror = "1.0.50"

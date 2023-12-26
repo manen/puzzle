@@ -11,6 +11,8 @@ crate-type = ["cdylib"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+puzzle_common = { path = "../../common" }
 log = { workspace = true }
 anyhow = "1.0.75"
 puzzle_log = { path = "../../glue/log/log", features = ["wasm"]}
+id = { path = "../../glue/id/id", features = ["wasm"] }

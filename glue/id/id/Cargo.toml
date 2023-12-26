@@ -1,0 +1,13 @@
+[package]
+name = "id"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+runtime = ["dep:id_runtime"]
+wasm = ["dep:id_wasm"]
+
+[dependencies]
+glue = { path = "../../common/common" }
+id_runtime = { path = "../runtime", optional = true }
+id_wasm = { path = "../wasm", optional = true }

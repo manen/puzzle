@@ -1,8 +1,10 @@
+use id::App;
+
+const APP: App = id::app_auto!();
+
 #[no_mangle]
 pub extern "C" fn puzzle_main() {
 	puzzle_log::init().unwrap();
-	log::info!("hello world");
-
 	match main() {
 		Ok(_) => (),
 		Err(err) => log::error!("{err}"),
@@ -10,6 +12,10 @@ pub extern "C" fn puzzle_main() {
 }
 
 fn main() -> anyhow::Result<()> {
+	id::init(&APP);
+	id::ensure_api_version()?;
+
+	log::info!("hello world");
 	Ok(())
 }
 

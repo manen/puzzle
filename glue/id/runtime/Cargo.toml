@@ -1,0 +1,12 @@
+[package]
+name = "id_runtime"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+puzzle_common = { path = "../../../common" }
+id_common = { path = "../common" }
+wasmtime = { workspace = true }
+thiserror = "1.0.52"

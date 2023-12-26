@@ -5,6 +5,8 @@ use wasmtime::{Engine, Linker, Module, Store};
 pub enum Error {
 	#[error("wasmtime error: {0}")]
 	Wasmtime(#[from] anyhow::Error),
+	#[error("id error: {0}")]
+	Id(#[from] id::RtError),
 }
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -19,13 +21,18 @@ pub fn start(wasm: &[u8]) -> Result<()> {
 
 	let mut linker = Linker::new(&engine);
 	puzzle_log::link(&mut linker)?;
+	id::link(&mut linker)?;
 
 	let instance = linker.instantiate(&mut store, &module)?;
 
 	let puzzle_main = instance.get_typed_func::<(), ()>(&mut store, "puzzle_main")?;
 	puzzle_main.call(&mut store, ())?;
+	id::ensure_app_api_version(&mut store, &instance)?;
 
-	let puzzle_render = instance.get_typed_func::<(), ()>(&mut store, "puzzle_render")?;
+	let app = id::app(&mut store, &instance)?;
+	log::info!("running app: {app}");
+
+	// let puzzle_render = instance.get_typed_func::<(), ()>(&mut store, "puzzle_render")?;
 
 	Ok(())
 }
