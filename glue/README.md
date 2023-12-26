@@ -6,9 +6,9 @@ what we should aim for is a match in the wasm-facing and x86_64-facing apis of t
 
 ## directory structure
 
-`glue/<name>/<name>`: reexport module, depending on target platform
-`glue/<name>/wasm`: webassembly sdk
-`glue/<name>/runtime`: runtime implementation
+- `glue/<name>/<name>`: reexport module, depending on target platform
+- `glue/<name>/wasm`: webassembly sdk
+- `glue/<name>/runtime`: runtime implementation
 
 ## API
 
