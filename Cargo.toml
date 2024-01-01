@@ -17,6 +17,7 @@ puzzle_log = { path = "./glue/log/log" }
 bash = { path = "./utils/cli/bash" }
 gen_wgl = { path = "./utils/gen/wgl" }
 iter_join = { path = "./utils/iter/join" }
+iter_read_until = { path = "./utils/iter/read_until" }
 
 wasmtime = "16.0.0"
 log = "0.4.20"
