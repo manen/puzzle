@@ -4,6 +4,7 @@ members = [
 	"common",
 	"runners/*",
 	"glue/*/*",
+	"utils/*/*",
 	"apps/*",
 ]
 
@@ -13,6 +14,9 @@ wasmtime_common = { path = "./runners/wasmtime_common" }
 glue = { path = "./glue/common/common" }
 id = { path = "./glue/id/id" }
 puzzle_log = { path = "./glue/log/log" }
+bash = { path = "./utils/cli/bash" }
+gen_wgl = { path = "./utils/gen/wgl" }
+
 wasmtime = "16.0.0"
 log = "0.4.20"
 thiserror = "1.0.50"
