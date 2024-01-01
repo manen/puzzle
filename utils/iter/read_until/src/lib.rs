@@ -1,42 +1,26 @@
 #[cfg(test)]
 mod tests;
 
+mod slice;
+mod str;
+pub use slice::*;
+pub use str::*;
+
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
-pub enum Read<'a, T> {
+pub enum Read<T> {
 	Finished,
-	Condition(&'a [T]),
-	End(&'a [T]),
+	Condition(T),
+	End(T),
 }
 
-pub struct ReadUntil<'a, T> {
-	slice: &'a [T],
-	i: usize,
-}
-impl<'a, T> ReadUntil<'a, T> {
-	pub fn read_until<F: Fn(&T) -> bool>(&mut self, f: F) -> Read<'a, T> {
-		if self.i >= self.slice.len() {
-			return Read::Finished;
-		}
+pub trait IntoReader<'a> {
+	type Reader: Reader<'a>;
 
-		let start_i = self.i;
-		for item in &self.slice[self.i..] {
-			self.i += 1;
-			if f(item) {
-				return Read::Condition(&self.slice[start_i..self.i - 1]);
-			}
-		}
-		Read::End(&self.slice[start_i..self.i])
-	}
+	fn reader(&'a self) -> Self::Reader;
 }
+pub trait Reader<'a> {
+	type Item;
+	type Output;
 
-pub trait IntoReadUntil<T> {
-	fn read_until<'a>(&'a self) -> ReadUntil<'a, T>;
-}
-impl<T, A: AsRef<[T]>> IntoReadUntil<T> for A {
-	fn read_until<'a>(&'a self) -> ReadUntil<'a, T> {
-		ReadUntil {
-			slice: self.as_ref(),
-			i: 0,
-		}
-	}
+	fn read_until<F: Fn(Self::Item) -> bool>(&mut self, f: F) -> Read<Self::Output>;
 }
