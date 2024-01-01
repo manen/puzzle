@@ -37,3 +37,17 @@ fn str() {
 	assert_eq!(readu.read_until(|a| a == b' '), Read::Condition("hello"));
 	assert_eq!(readu.read_until(|a| a == b' '), Read::End("world!"))
 }
+
+#[test]
+fn str_item() {
+	let string = "long words words blah blah brainrot";
+	let mut readu = string.reader();
+	let mut iter = quickiter::iter_infinite(move || readu.read_until_item(b' '));
+
+	assert_eq!(iter.next(), Some(Read::Condition("long")));
+	assert_eq!(iter.next(), Some(Read::Condition("words")));
+	assert_eq!(iter.next(), Some(Read::Condition("words")));
+	assert_eq!(iter.next(), Some(Read::Condition("blah")));
+	assert_eq!(iter.next(), Some(Read::Condition("blah")));
+	assert_eq!(iter.next(), Some(Read::End("brainrot")));
+}

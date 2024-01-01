@@ -525,6 +525,7 @@ name = "gen_wgl"
 version = "0.1.0"
 dependencies = [
  "iter_join",
+ "iter_read_until",
 ]
 
 [[package]]
@@ -669,6 +670,9 @@ version = "0.1.0"
 [[package]]
 name = "iter_read_until"
 version = "0.1.0"
+dependencies = [
+ "quickiter",
+]
 
 [[package]]
 name = "itertools"
@@ -889,6 +893,10 @@ version = "0.1.0"
 dependencies = [
  "log",
 ]
+
+[[package]]
+name = "quickiter"
+version = "0.1.0"
 
 [[package]]
 name = "quote"

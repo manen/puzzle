@@ -23,4 +23,8 @@ pub trait Reader<'a> {
 	type Output;
 
 	fn read_until<F: Fn(Self::Item) -> bool>(&mut self, f: F) -> Read<Self::Output>;
+
+	fn read_until_item<E: PartialEq<Self::Item>>(&mut self, item: E) -> Read<Self::Output> {
+		self.read_until(|a| item == a)
+	}
 }
