@@ -5,10 +5,10 @@ pub struct SliceReader<'a, T> {
 	i: usize,
 }
 impl<'a, T> Reader<'a> for SliceReader<'a, T> {
-	type Item = &'a T;
+	type Item = T;
 	type Output = &'a [T];
 
-	fn read_until<F: Fn(&'a T) -> bool>(&mut self, f: F) -> Read<&'a [T]> {
+	fn read_until<F: Fn(&T) -> bool>(&mut self, f: F) -> Read<&'a [T]> {
 		if self.i >= self.slice.len() {
 			return Read::Finished;
 		}

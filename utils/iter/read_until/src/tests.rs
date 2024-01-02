@@ -34,8 +34,8 @@ fn str() {
 	let string = "hello world!";
 	let mut readu = string.reader();
 
-	assert_eq!(readu.read_until(|a| a == b' '), Read::Condition("hello"));
-	assert_eq!(readu.read_until(|a| a == b' '), Read::End("world!"))
+	assert_eq!(readu.read_until(|a| a.eq(&b' ')), Read::Condition("hello"));
+	assert_eq!(readu.read_until(|a| a.eq(&b' ')), Read::End("world!"))
 }
 
 #[test]
@@ -50,4 +50,23 @@ fn str_item() {
 	assert_eq!(iter.next(), Some(Read::Condition("blah")));
 	assert_eq!(iter.next(), Some(Read::Condition("blah")));
 	assert_eq!(iter.next(), Some(Read::End("brainrot")));
+}
+
+#[test]
+fn iterr() {
+	let mut readu = (0..10).chain(0..10).chain(0..10).reader();
+
+	assert_eq!(readu.read_until_item(3), Read::Condition(vec![0, 1, 2]));
+	assert_eq!(
+		readu.read_until_item(9),
+		Read::Condition(vec![4, 5, 6, 7, 8])
+	);
+	assert_eq!(
+		readu.read_until_item(8),
+		Read::Condition(vec![0, 1, 2, 3, 4, 5, 6, 7])
+	);
+	assert_eq!(
+		readu.read_until(|_| false),
+		Read::End(vec![9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+	);
 }

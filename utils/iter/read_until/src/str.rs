@@ -8,7 +8,7 @@ impl<'a> Reader<'a> for StrReader<'a> {
 	type Item = u8;
 	type Output = &'a str;
 
-	fn read_until<F: Fn(u8) -> bool>(&mut self, f: F) -> Read<Self::Output> {
+	fn read_until<F: Fn(&u8) -> bool>(&mut self, f: F) -> Read<Self::Output> {
 		if self.i > self.s.len() {
 			return Read::Finished;
 		}
@@ -16,7 +16,7 @@ impl<'a> Reader<'a> for StrReader<'a> {
 		let start_i = self.i;
 		for item in &mut self.s[start_i..].bytes() {
 			self.i += 1;
-			if f(item) {
+			if f(&item) {
 				return Read::Condition(&self.s[start_i..self.i - 1]);
 			}
 		}
