@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 iter_join.workspace = true
+iter_read_until.workspace = true

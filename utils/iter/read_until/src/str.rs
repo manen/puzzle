@@ -1,5 +1,6 @@
 use crate::{IntoReader, Read, Reader};
 
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct StrReader<'a> {
 	s: &'a str,
 	i: usize,

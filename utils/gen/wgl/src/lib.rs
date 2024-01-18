@@ -1,3 +1,8 @@
+use crate::filter::IntoFilter;
+use iter_join::JoinItem;
+use iter_read_until::{IntoIteratorReader, Read, Reader};
+use std::fs;
+
 mod api;
 mod filter;
 mod token;
@@ -11,21 +16,24 @@ mod token;
 // 	fn next(&mut self) -> Option<Self::Item> {}
 // }
 
-pub fn api() {}
-
-#[test]
-fn fasz() {
-	use std::fs;
-
-	use filter::IntoFilter;
-	use iter_join::JoinItem;
-
-	let a = fs::read_to_string("/usr/include/GLES3/gl3.h")
+pub fn api() {
+	let relevant_c = fs::read_to_string("/usr/include/GLES3/gl3.h")
 		.unwrap()
 		.split('\n')
 		.filter_relevant()
 		.join("\n")
 		.collect::<String>();
+	let relevant_c = relevant_c.as_str();
+	let tokenizer = token::tokenizer(&relevant_c);
+	panic!("{tokenizer:?}");
 
-	panic!("{a}");
+	tokenizer.for_each(|a| eprintln!("{a:?}")); // this still hangs forever
+	todo!()
+}
+
+#[test]
+fn fasz() {
+	let api = api();
+
+	panic!("{api:?}");
 }
