@@ -1,6 +1,5 @@
 use crate::filter::IntoFilter;
 use iter_join::JoinItem;
-use iter_read_until::{IntoIteratorReader, Read, Reader};
 use std::fs;
 
 mod api;
@@ -27,8 +26,8 @@ pub fn api() {
 	let tokenizer = token::tokenizer(&relevant_c);
 	panic!("{tokenizer:?}");
 
-	tokenizer.for_each(|a| eprintln!("{a:?}")); // this still hangs forever
-	todo!()
+	// tokenizer.for_each(|a| eprintln!("{a:?}")); // this still hangs forever
+	// todo!()
 }
 
 #[test]
