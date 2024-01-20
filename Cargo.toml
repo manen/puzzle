@@ -6,19 +6,23 @@ members = [
 	"glue/*/*",
 	"utils/*/*",
 	"apps/*",
+	"server/*",
 ]
 
 [workspace.dependencies]
-puzzle_common = { path = "./common" }
+puzzle_common = { path =   "./common" }
 wasmtime_common = { path = "./runners/wasmtime_common" }
-glue = { path = "./glue/common/common" }
-id = { path = "./glue/id/id" }
-puzzle_log = { path = "./glue/log/log" }
-bash = { path = "./utils/cli/bash" }
-gen_wgl = { path = "./utils/gen/wgl" }
-iter_join = { path = "./utils/iter/join" }
+
+glue = { path =            "./glue/common/common" }
+id = { path =              "./glue/id/id" }
+puzzle_log = { path =      "./glue/log/log" }
+fakewasi = { path =        "./glue/fakewasi/fakewasi" }
+
+bash = { path =            "./utils/cli/bash" }
+gen_wgl = { path =         "./utils/gen/wgl" }
+iter_join = { path =       "./utils/iter/join" }
 iter_read_until = { path = "./utils/iter/read_until" }
-quickiter = { path = "./utils/iter/quickiter" }
+quickiter = { path =       "./utils/iter/quickiter" }
 
 wasmtime = "16.0.0"
 log = "0.4.20"

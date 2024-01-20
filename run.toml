@@ -6,3 +6,5 @@ watch-all = "cargo watch --watch runners/desktop --watch runners/wasmtime_common
 dev = "run build-dev && run build-desktop && RUST_LOG=info target/debug/puzzle run target/wasm32-unknown-unknown/debug/dev.wasm"
 
 install-desktop = "cargo install --path=runners/desktop"
+
+server = "cargo run --manifest-path server/server/Cargo.toml --release"
