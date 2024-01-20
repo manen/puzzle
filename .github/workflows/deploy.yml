@@ -20,7 +20,8 @@ jobs:
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.SSHKEY }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
         source: ./
         target: /path/to/project 
  
