@@ -14,4 +14,4 @@ jobs:
             username: ${{ secrets.USERNAME }}
             password: ${{ secrets.PASSWORD }}
             port: ${{ secrets.PORT }}
-            script: rm -rf puzzle; git clone git@github.com:manen/puzzle && cd puzzle && git switch wasi && && cargo build --manifest-path server/server/Cargo.toml --release && pkill server; run server
+            script: rm -rf puzzle; git clone git@github.com:manen/puzzle && cd puzzle && git switch wasi && cargo build --manifest-path server/server/Cargo.toml --release && pkill server; run server
