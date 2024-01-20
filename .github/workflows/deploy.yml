@@ -4,7 +4,7 @@ on:
     branches:
       - wasi # dont forget
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: ssh
@@ -14,4 +14,4 @@ jobs:
             username: ${{ secrets.USERNAME }}
             password: ${{ secrets.PASSWORD }}
             port: ${{ secrets.PORT }}
-            script: echo eddig jo bazdmeg?
+            script: git clone git@github.com:manen/puzzle && cd puzzle && cargo build --manifest-path server/server/Cargo.toml --release && pkill server; run server
