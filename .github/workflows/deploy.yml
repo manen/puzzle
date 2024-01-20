@@ -7,36 +7,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
- 
-    - name: Setup SSH connection
-      uses: webfactory/ssh-agent@v0.5.0
-      with:
-        ssh-private-key: ${{ secrets.SSHKEY }}
- 
-    - name: Copy files into the server
-      uses: appleboy/scp-action@v0.1.4
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
-        port: ${{ secrets.PORT }}
-        source: ./
-        target: /path/to/project 
- 
-    - uses: shivammathur/setup-php@15c43e89cdef867065b0213be354c2841860869e
-      with:
-        php-version: '8.0'
-    - uses: actions/checkout@v3
-      with:
-        ref: dev
-    - name: Deploy
-      uses: fifsky/ssh-action@master
-      with:
-        command: cargo build --manifest-path server/server/Cargo.toml --release && pkill server && run server > $(date +%s).puzzle.log
-        host: ${{ secrets.HOST }}
-        port: ${{ secrets.PORT }}
-        user: ${{ secrets.USERNAME }}
-        key: ${{ secrets.SSHKEY}}
-        args: "-tt -vvv"
+      - name: ssh
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+            host: ${{ secrets.HOST }}
+            username: ${{ secrets.USERNAME }}
+            password: ${{ secrets.PASSWORD }}
+            port: ${{ secrets.PORT }}
+            script: git clone git@github.com:manen/puzzle && cd puzzle && cargo build --manifest-path server/server/Cargo.toml --release && pkill server; run server
