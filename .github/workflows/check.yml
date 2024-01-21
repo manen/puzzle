@@ -2,7 +2,7 @@ name: check
 on:
   push:
     branches:
-      - wasi # dont forget
+      - '*'
 jobs:
   deploy:
     runs-on: ubuntu-latest
