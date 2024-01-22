@@ -29,10 +29,3 @@ pub fn api() {
 	// tokenizer.for_each(|a| eprintln!("{a:?}")); // this still hangs forever
 	// todo!()
 }
-
-#[test]
-fn fasz() {
-	let api = api();
-
-	panic!("{api:?}");
-}
