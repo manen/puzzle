@@ -6,7 +6,7 @@ members = [
 	"glue/*/*",
 	"utils/*/*",
 	"apps/*",
-	"server/*",
+	"net/*",
 ]
 
 [workspace.dependencies]
@@ -24,7 +24,14 @@ iter_join = { path =       "./utils/iter/join" }
 iter_read_until = { path = "./utils/iter/read_until" }
 quickiter = { path =       "./utils/iter/quickiter" }
 
+net_common = { path =      "./net/common" }
+net_client = { path =      "./net/client" }
+
 wasmtime = "16.0.0"
 log = "0.4.20"
 thiserror = "1.0.50"
 anyhow = "1.0.75"
+serde = { version = "1.0.195", features = ["derive"] }
+serde_json = "1.0.111"
+bincode = "1.3.3"
+simple_logger = "4.3.3"

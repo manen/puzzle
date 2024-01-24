@@ -1,0 +1,18 @@
+[package]
+name = "net_server"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+socketioxide = "0.8"
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+axum = "0.6"
+serde = { workspace = true, features = ["derive"] }
+serde_json.workspace = true
+anyhow.workspace = true
+bincode.workspace = true
+log.workspace = true
+simple_logger.workspace = true
+net_common.workspace = true

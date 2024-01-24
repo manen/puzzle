@@ -7,4 +7,4 @@ dev = "run build-dev && run build-desktop && RUST_LOG=info target/debug/puzzle r
 
 install-desktop = "cargo install --path=runners/desktop"
 
-server = "cargo run --manifest-path server/server/Cargo.toml --release"
+server = "cargo run --manifest-path net/server/Cargo.toml --release"
