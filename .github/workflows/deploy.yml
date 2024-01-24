@@ -23,4 +23,5 @@ jobs:
           cargo build --release
           pkill net_server
           nohup cargo run --release > net_server.$(date +%s).log 2> net_server.$(date +%s).err < /dev/null &
+          echo MI A FASZOM BAJOD VAN
           exit 0
