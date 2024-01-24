@@ -19,4 +19,4 @@ jobs:
 
       - name: compile, run & disown
         run: |
-          cargo install --manifest-path net/server && pkill net_server && nohup net_server > net_server.$(date +%s).log 2> net_server.$(date +%s).err < /dev/null &
+          cargo install --path net/server && pkill net_server && nohup net_server > net_server.$(date +%s).log 2> net_server.$(date +%s).err < /dev/null &
