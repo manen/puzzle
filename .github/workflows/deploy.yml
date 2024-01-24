@@ -1,8 +1,10 @@
 name: deploy_server
 on:
-  push:
-    branches:
-      - wasi # dont forget
+  workflow_run:
+    workflows: ["test"]
+    types:
+      - completed
+
 jobs:
   deploy_server:
     runs-on: self-hosted
