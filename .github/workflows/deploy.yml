@@ -10,6 +10,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: compile, run & disown
         run: |
-          cd puzzle/net/server
+          cd net/server
           cargo build --release
           nohup cargo run --release
