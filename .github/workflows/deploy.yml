@@ -1,17 +1,14 @@
-name: deploy
+name: deploy_server
 on:
   push:
     branches:
       - wasi # dont forget
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
+  deploy_server:
+    runs-on: self-hosted
     steps:
-      - name: ssh
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-            host: ${{ secrets.HOST }}
-            username: ${{ secrets.USERNAME }}
-            password: ${{ secrets.PASSWORD }}
-            port: ${{ secrets.PORT }}
-            script: rm -rf puzzle; git clone git@github.com:manen/puzzle && cd puzzle && git switch wasi && cargo build --manifest-path net/server/Cargo.toml --release && pkill server; nohup run server & disown
+      - name: compile, run & disown
+        run: |
+          cd net/server
+          cargo build --release
+          nohup cargo run --release
