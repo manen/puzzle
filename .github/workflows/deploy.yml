@@ -1,9 +1,12 @@
 name: deploy_server
 on:
-  workflow_run:
-    workflows: ["test"]
-    types:
-      - completed
+  # workflow_run:
+  #   workflows: ["test"]
+  #   types:
+  #     - completed
+  push:
+    branches:
+      - 'wasi'
 
 jobs:
   deploy_server:
