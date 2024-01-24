@@ -9,4 +9,4 @@ jobs:
     steps:
       - name: compile, run & disown
         run: |
-          cd puzzle && ls -la
+          ls -la **
