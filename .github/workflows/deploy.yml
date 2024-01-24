@@ -9,6 +9,4 @@ jobs:
     steps:
       - name: compile, run & disown
         run: |
-          cd puzzle/net/server
-          cargo build --release
-          nohup cargo run --release
+          cd puzzle && ls -la
