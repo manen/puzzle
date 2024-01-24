@@ -5,23 +5,8 @@ on:
       - '*'
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v2
-      - name: cache target
-        id: cache-target
-        uses: actions/cache@v4
-        with:
-          path: target
-          key: ${{ runner.os }}-target
-
-      # - uses: actions-rs/toolchain@v1
-      #   with:
-      #     toolchain: stable
-
-      - uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --release --all-features
       - name: cargo check
         run: cargo check
