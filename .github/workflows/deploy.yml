@@ -12,4 +12,5 @@ jobs:
         run: |
           cd net/server
           cargo build --release
+          pkill net_server
           nohup cargo run --release
