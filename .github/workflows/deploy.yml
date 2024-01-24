@@ -7,6 +7,9 @@ jobs:
   deploy_server:
     runs-on: self-hosted
     steps:
+      - uses: actions/checkout@v2
       - name: compile, run & disown
         run: |
-          ls -la
+          cd puzzle/net/server
+          cargo build --release
+          nohup cargo run --release
