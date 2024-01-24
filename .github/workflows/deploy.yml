@@ -19,9 +19,4 @@ jobs:
 
       - name: compile, run & disown
         run: |
-          cd net/server
-          cargo build --release
-          pkill net_server
-          nohup cargo run --release > net_server.$(date +%s).log 2> net_server.$(date +%s).err < /dev/null &
-          echo MI A FASZOM BAJOD VAN
-          exit 0
+          cargo install --manifest-path net/server && pkill net_server && nohup net_server > net_server.$(date +%s).log 2> net_server.$(date +%s).err < /dev/null &
