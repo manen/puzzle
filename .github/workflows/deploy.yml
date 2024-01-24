@@ -9,4 +9,4 @@ jobs:
     steps:
       - name: compile, run & disown
         run: |
-          ls -la **
+          ls -la
