@@ -23,6 +23,7 @@ gen_wgl = { path =         "./utils/gen/wgl" }
 iter_join = { path =       "./utils/iter/join" }
 iter_read_until = { path = "./utils/iter/read_until" }
 quickiter = { path =       "./utils/iter/quickiter" }
+fs_trait = { path =        "./utils/fs/trait" }
 
 net_common = { path =      "./net/common" }
 net_client = { path =      "./net/client" }
