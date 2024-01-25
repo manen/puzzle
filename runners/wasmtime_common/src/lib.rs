@@ -1,6 +1,5 @@
 use thiserror::Error;
 use wasmtime::{Engine, Linker, Module, Store};
-use wasmtime_wasi::WasiCtxBuilder;
 
 #[derive(Debug, Error)]
 pub enum Error {
