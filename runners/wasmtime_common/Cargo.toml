@@ -12,4 +12,3 @@ anyhow.workspace = true
 log.workspace = true
 thiserror.workspace = true
 wasmtime.workspace = true
-wasmtime-wasi = "16.0.0"
