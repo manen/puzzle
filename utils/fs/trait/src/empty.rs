@@ -8,6 +8,8 @@ use crate::Fs;
 pub enum Error {
 	#[error("file or directory not found: {path}")]
 	NotFound { path: String },
+	#[error("can't open directory, try using read_dir: {path}")]
+	DirOpen { path: String },
 }
 
 #[derive(Default, Clone, Copy, Debug)]
@@ -18,17 +20,28 @@ impl Fs for EmptyFs {
 	type Socket = EmptySocket;
 
 	fn read_dir(&self, path: &str) -> Result<Self::ReadDir, Self::Error> {
-		Err(Error::NotFound {
-			path: path.to_owned(),
-		})
+		if path == "/" {
+			Ok(iter::empty())
+		} else {
+			Err(Error::NotFound {
+				path: path.to_owned(),
+			})
+		}
 	}
 	fn open(&self, path: &str) -> Result<Self::Socket, Self::Error> {
-		Err(Error::NotFound {
-			path: path.to_owned(),
-		})
+		if path == "/" {
+			Err(Error::DirOpen {
+				path: path.to_owned(),
+			})
+		} else {
+			Err(Error::NotFound {
+				path: path.to_owned(),
+			})
+		}
 	}
 }
 
+#[derive(Copy, Clone, Debug)]
 pub struct EmptySocket;
 impl io::Write for EmptySocket {
 	fn write(&mut self, _: &[u8]) -> io::Result<usize> {

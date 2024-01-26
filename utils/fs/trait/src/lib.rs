@@ -3,20 +3,25 @@ use std::{
 	io::{Read, Write},
 };
 
+pub mod abs;
 pub mod empty;
 pub mod file_mount;
+pub mod fs_mount;
 pub mod or;
 pub mod quicksocket;
 #[cfg(test)]
 mod tests;
 
 pub mod prelude {
+	pub use crate::or::prelude::*;
 	pub use crate::quicksocket::prelude::*;
 	pub use crate::Fs;
 }
 
+use abs::Abs;
 pub use empty::{empty, EmptyFs};
 pub use file_mount::FileMount;
+use fs_mount::FsMount;
 pub use or::IntoSocketOr;
 
 /// this trait is very much like `Iterator`, it defines some functions necessary for filesystem functions,
@@ -36,9 +41,22 @@ pub trait Fs: Sized {
 	fn mount_file<P: Into<String>, S: Socket>(self, path: P, socket: S) -> FileMount<Self, S> {
 		FileMount {
 			fs: self,
-			path: path.into(),
+			path: abs::absify(path.into()).to_string(),
 			socket,
 		}
+	}
+	/// mounts a subfilesystem (aka directory) to a path
+	fn mount_fs<P: Into<String>, F: Fs>(self, path: P, fs: F) -> FsMount<Self, F> {
+		let path = path.into();
+		FsMount {
+			a: self,
+			b: fs,
+			path: abs::add_tail(abs::absify(path)).to_string(),
+		}
+	}
+	/// absifies all requests to this filesystem
+	fn abs(self) -> Abs<Self> {
+		Abs { fs: self }
 	}
 }
 
