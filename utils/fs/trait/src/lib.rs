@@ -1,15 +1,28 @@
-use std::io::{Read, Write};
+use std::{
+	fmt::Debug,
+	io::{Read, Write},
+};
 
 pub mod empty;
+pub mod file_mount;
+pub mod or;
+pub mod quicksocket;
 #[cfg(test)]
 mod tests;
 
+pub mod prelude {
+	pub use crate::quicksocket::prelude::*;
+	pub use crate::Fs;
+}
+
 pub use empty::{empty, EmptyFs};
+pub use file_mount::FileMount;
+pub use or::IntoSocketOr;
 
 /// this trait is very much like `Iterator`, it defines some functions necessary for filesystem functions,
 /// and defines functions for modifying the current `Fs` fully functionally and at compile-time
-pub trait Fs {
-	type Error: std::error::Error;
+pub trait Fs: Sized {
+	type Error: std::error::Error + Debug;
 	type ReadDir: Iterator<Item = String>;
 	type Socket: Socket;
 
@@ -19,6 +32,14 @@ pub trait Fs {
 	fn open(&self, path: &str) -> Result<Self::Socket, Self::Error>;
 
 	// - modifier functions
+	/// mount a file on top of this filesystem
+	fn mount_file<P: Into<String>, S: Socket>(self, path: P, socket: S) -> FileMount<Self, S> {
+		FileMount {
+			fs: self,
+			path: path.into(),
+			socket,
+		}
+	}
 }
 
 /// socket should be deinit on drop, up for the implementation to.. implement
