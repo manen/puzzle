@@ -2,7 +2,7 @@
 
 the main crate is [`fs_trait`](trait/README.md)
 
-the point is you can create any virtual filesystem of your choosing that won't actually exist, only in code and only on demand, when called for with a `read_dir` or an `open`. \
+the point is you can create any virtual filesystem of your choosing that won't actually exist, only in code and only on demand, when called for with a `read_dir` or an `open`.
 
 files in this filesystem aren't carved in stone and rigid like in regular filesystems, rather any type can be a "file" that implements `io::Read` and `io::Write`. that means you can use your file as a regular tcp socket, or maybe even some programmatic function that accepts encoded binary as input. or just json. be lazy
 
