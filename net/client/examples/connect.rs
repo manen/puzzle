@@ -6,6 +6,7 @@ fn main() -> anyhow::Result<()> {
 
 	loop {
 		client.ping()?;
+		log::info!("pinged");
 		thread::sleep(Duration::from_millis(500));
 	}
 }
