@@ -1,4 +1,3 @@
-use anyhow::anyhow;
 use std::{env, fs};
 
 pub fn systemd() -> anyhow::Result<()> {
