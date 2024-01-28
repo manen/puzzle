@@ -1,9 +1,9 @@
-use crate::{or, IntoSocketOr};
+use crate::{or, prelude::*, IntoSocketOr, Result};
 
 #[derive(Clone, Debug)]
 pub enum ReadDir<A: Iterator<Item = String>, B: Iterator<Item = String>> {
 	A { iter: A, path: Option<String> },
-	B(B),
+	B { iter: B, path: String },
 }
 impl<A: Iterator<Item = String>, B: Iterator<Item = String>> Iterator for ReadDir<A, B> {
 	type Item = String;
@@ -17,7 +17,7 @@ impl<A: Iterator<Item = String>, B: Iterator<Item = String>> Iterator for ReadDi
 					None => None,
 				},
 			},
-			ReadDir::B(iter) => iter.next(),
+			ReadDir::B { iter, path } => iter.next().map(|short| format!("{path}{short}")),
 		}
 	}
 	fn size_hint(&self) -> (usize, Option<usize>) {
@@ -27,11 +27,12 @@ impl<A: Iterator<Item = String>, B: Iterator<Item = String>> Iterator for ReadDi
 				let add = if path.is_some() { 1 } else { 0 };
 				(size_hint.0 + add, size_hint.1.map(|x| x + add))
 			}
-			ReadDir::B(iter) => iter.size_hint(),
+			ReadDir::B { iter, .. } => iter.size_hint(),
 		}
 	}
 }
 
+#[derive(Clone, Debug)]
 pub struct FsMount<A: crate::Fs, B: crate::Fs> {
 	pub(crate) a: A,
 	pub(crate) path: String,
@@ -40,35 +41,28 @@ pub struct FsMount<A: crate::Fs, B: crate::Fs> {
 impl<A: crate::Fs, B: crate::Fs> crate::Fs for FsMount<A, B> {
 	type ReadDir = ReadDir<A::ReadDir, B::ReadDir>;
 	type Socket = or::SocketOr<A::Socket, B::Socket>;
-	type Error = or::ErrorOr<A::Error, B::Error>;
 
-	fn read_dir(&self, path: &str) -> Result<Self::ReadDir, Self::Error> {
+	fn read_dir(&self, path: &str) -> Result<Self::ReadDir> {
 		if path.starts_with(&self.path) {
-			self.b
-				.read_dir(&path.replacen(&self.path, "", 1))
-				.map(|readdir| ReadDir::B(readdir))
-				.map_err(|err| or::ErrorOr::B(err))
+			Ok(ReadDir::B {
+				iter: self
+					.b
+					.read_dir(&path.replacen(&self.path, "", 1))
+					.propagate(&self.path)?,
+				path: self.path.clone(),
+			})
 		} else {
-			self.a
-				.read_dir(path)
-				.map(|readdir| ReadDir::A {
-					iter: readdir,
-					path: Some(crate::abs::remove_tail(&self.path).to_string()),
-				})
-				.map_err(|err| or::ErrorOr::A(err))
+			Ok(ReadDir::A {
+				iter: self.a.read_dir(path).propagate(&self.path)?,
+				path: Some(self.path.clone()),
+			})
 		}
 	}
-	fn open(&self, path: &str) -> Result<Self::Socket, Self::Error> {
+	fn open(&self, path: &str) -> Result<Self::Socket> {
 		if path.starts_with(&self.path) {
-			self.b
-				.open(&path.replacen(&self.path, "", 1))
-				.map(|socket| socket.b())
-				.map_err(|err| or::ErrorOr::B(err))
+			Ok(self.b.open(&path.replacen(&self.path, "", 1))?.b())
 		} else {
-			self.a
-				.open(path)
-				.map(|socket| socket.a())
-				.map_err(|err| or::ErrorOr::A(err))
+			Ok(self.a.open(path)?.a())
 		}
 	}
 }

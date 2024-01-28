@@ -1,6 +1,6 @@
 use std::io;
 
-pub mod prelude {
+pub(crate) mod prelude {
 	pub use super::{IntoReadOnly, IntoWriteOnly};
 }
 

@@ -1,6 +1,6 @@
 use std::io;
 
-pub mod prelude {
+pub(crate) mod prelude {
 	pub use super::IntoSocketOr;
 }
 
@@ -53,6 +53,13 @@ pub enum ErrorOr<A: error::Error + Debug, B: error::Error + Debug> {
 	A(A),
 	#[error("{0}")]
 	B(B),
+}
+impl<A: error::Error + Debug + From<crate::Error>, B: error::Error + Debug> From<crate::Error>
+	for ErrorOr<A, B>
+{
+	fn from(value: crate::Error) -> Self {
+		ErrorOr::A(value.into())
+	}
 }
 #[derive(Debug, Clone)]
 pub enum IteratorOr<T, A: Iterator<Item = T>, B: Iterator<Item = T>> {

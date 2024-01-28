@@ -1,41 +1,32 @@
 use std::{io, iter};
 
-use thiserror::Error;
-
-use crate::Fs;
-
-#[derive(Error, Debug, Clone)]
-pub enum Error {
-	#[error("file or directory not found: {path}")]
-	NotFound { path: String },
-	#[error("can't open directory, try using read_dir: {path}")]
-	DirOpen { path: String },
-}
+use crate::{Error, Fs, Result};
 
 #[derive(Default, Clone, Copy, Debug)]
 pub struct EmptyFs;
 impl Fs for EmptyFs {
 	type ReadDir = iter::Empty<String>;
-	type Error = Error;
 	type Socket = EmptySocket;
 
-	fn read_dir(&self, path: &str) -> Result<Self::ReadDir, Self::Error> {
+	fn read_dir(&self, path: &str) -> Result<Self::ReadDir> {
+		crate::error::abs_check(path)?;
 		if path == "/" {
 			Ok(iter::empty())
 		} else {
 			Err(Error::NotFound {
-				path: path.to_owned(),
+				path_abs: path.to_owned(),
 			})
 		}
 	}
-	fn open(&self, path: &str) -> Result<Self::Socket, Self::Error> {
-		if path == "/" {
-			Err(Error::DirOpen {
-				path: path.to_owned(),
+	fn open(&self, path: &str) -> Result<Self::Socket> {
+		crate::error::abs_check(path)?;
+		if crate::abs::remove_tail(path) == "" {
+			Err(crate::Error::DirOpen {
+				path_abs: path.to_owned(),
 			})
 		} else {
-			Err(Error::NotFound {
-				path: path.to_owned(),
+			Err(crate::Error::NotFound {
+				path_abs: path.to_owned(),
 			})
 		}
 	}

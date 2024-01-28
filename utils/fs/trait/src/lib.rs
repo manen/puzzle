@@ -1,10 +1,8 @@
-use std::{
-	fmt::Debug,
-	io::{Read, Write},
-};
+use std::io::{Read, Write};
 
 pub mod abs;
 pub mod empty;
+pub mod error;
 pub mod file_mount;
 pub mod fs_mount;
 pub mod or;
@@ -13,6 +11,7 @@ pub mod quicksocket;
 mod tests;
 
 pub mod prelude {
+	pub use crate::error::prelude::*;
 	pub use crate::or::prelude::*;
 	pub use crate::quicksocket::prelude::*;
 	pub use crate::Fs;
@@ -20,6 +19,7 @@ pub mod prelude {
 
 use abs::Abs;
 pub use empty::{empty, EmptyFs};
+pub use error::{Error, Result};
 pub use file_mount::FileMount;
 use fs_mount::FsMount;
 pub use or::IntoSocketOr;
@@ -27,21 +27,21 @@ pub use or::IntoSocketOr;
 /// this trait is very much like `Iterator`, it defines some functions necessary for filesystem functions,
 /// and defines functions for modifying the current `Fs` fully functionally and at compile-time
 pub trait Fs: Sized {
-	type Error: std::error::Error + Debug;
 	type ReadDir: Iterator<Item = String>;
 	type Socket: Socket;
 
 	/// read_dir returns an iterator over absolute paths of items in the directory
-	fn read_dir(&self, path: &str) -> Result<Self::ReadDir, Self::Error>;
+	fn read_dir(&self, path: &str) -> Result<Self::ReadDir>;
 	/// open opens a socket to a given path
-	fn open(&self, path: &str) -> Result<Self::Socket, Self::Error>;
+	fn open(&self, path: &str) -> Result<Self::Socket>;
 
 	// - modifier functions
 	/// mount a file on top of this filesystem
 	fn mount_file<P: Into<String>, S: Socket>(self, path: P, socket: S) -> FileMount<Self, S> {
+		let path = path.into();
 		FileMount {
 			fs: self,
-			path: abs::absify(path.into()).to_string(),
+			path,
 			socket,
 		}
 	}
@@ -51,7 +51,7 @@ pub trait Fs: Sized {
 		FsMount {
 			a: self,
 			b: fs,
-			path: abs::add_tail(abs::absify(path)).to_string(),
+			path,
 		}
 	}
 	/// absifies all requests to this filesystem

@@ -67,3 +67,43 @@ fn add_tail() {
 		"csocsok/es/segg/"
 	);
 }
+
+#[test]
+fn ridiculously_complicated() {
+	let fs = crate::empty()
+		.mount_file("/atoms", b"vibrating and shit".read_only())
+		.mount_fs(
+			"/earth",
+			crate::empty()
+				.mount_file("/weather", b"sunny".read_only())
+				.mount_file("/snowing", b"false".read_only())
+				.mount_fs(
+					"/peter_griffin",
+					crate::empty()
+						.mount_file("/name", b"peter".read_only())
+						.mount_file("/age", b"19".read_only()),
+				),
+		);
+
+	assert_eq!(
+		fs.read_dir("/").unwrap().collect::<Vec<_>>(),
+		vec!["/atoms", "/earth"]
+	);
+
+	// TODO currently only reads /earth/ and not /earth
+	// TODO i should like actually fix this but who am i kidding
+
+	assert_eq!(
+		fs.read_dir("/earth")
+			.map_err(|err| format!("{err}"))
+			.unwrap()
+			.collect::<Vec<_>>(),
+		vec!["/earth/weather", "/earth/snowing", "/earth/peter_griffin"]
+	);
+	assert_eq!(
+		fs.read_dir("/earth/peter_griffin/")
+			.unwrap()
+			.collect::<Vec<_>>(),
+		vec!["/earth/peter_griffin/name", "/earth/peter_griffin/age"]
+	);
+}
