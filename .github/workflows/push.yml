@@ -26,3 +26,31 @@ jobs:
 
       - name: cargo test
         run: cargo test
+
+  deployd:
+    needs: test
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - name: create target symlink
+        run: |
+          ln -s /target ./target
+
+      - name: cargo install deployd
+        run: cargo install --path utils/deploy/d
+      - name: cargo install deployctl
+        run: cargo install --path utils/deploy/ctl
+
+  server:
+    needs: deployd
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - name: create target symlink
+        run: |
+          ln -s /target ./target
+      
+      - name: compile net_server
+        run: cargo build --release --manifest-path net/server/Cargo.toml
+      - name: deployctl
+        run: deployctl -x /target/release/net_server

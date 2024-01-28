@@ -1,5 +1,6 @@
 use anyhow::anyhow;
 use axum::routing::get;
+use clap::Parser;
 use once_cell::sync::Lazy;
 use socketioxide::{
 	extract::{Bin, SocketRef},
@@ -10,6 +11,9 @@ use std::{
 	process::{Child, Command},
 	sync::Mutex,
 };
+
+mod systemd;
+use systemd::systemd;
 
 macro_rules! handle {
 	($err:expr) => {
@@ -30,12 +34,26 @@ enum State {
 }
 static STATE: Lazy<Mutex<State>> = Lazy::new(|| Mutex::new(State::Stopped));
 
+#[derive(Parser, Debug, Clone)]
+#[command(name = "deployd")]
+#[command(author = "manen")]
+struct Cli {
+	#[arg(long)]
+	/// enabling the systemd option will registed deployd with systemd and enable it
+	systemd: bool,
+}
+
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
 	real_main().await
 }
 async fn real_main() -> anyhow::Result<()> {
 	simple_logger::init_with_level(log::Level::Debug).map_err(|err| anyhow!("{err}"))?;
+
+	let cli = Cli::parse();
+	if cli.systemd {
+		return systemd();
+	}
 
 	let (layer, io) = SocketIo::new_layer();
 	io.ns("/", on_connect);
