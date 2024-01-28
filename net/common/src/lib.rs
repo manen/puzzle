@@ -6,4 +6,4 @@ pub use shared::Shared;
 pub use to_client::ToClient;
 pub use to_server::ToServer;
 
-pub const ADDR: &str = "localhost:4200";
+pub const ADDR: &str = "0.0.0.0:4200";
