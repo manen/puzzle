@@ -17,7 +17,7 @@ pub struct Client {
 }
 impl Client {
 	pub fn default() -> Result<Self> {
-		Client::new(puzzle_common::CONFIG.addr)
+		Client::new(format!("http://{}", net_common::ADDR))
 	}
 	pub fn new<S: Into<String>>(addr: S) -> Result<Self> {
 		let callback = |payload: Payload, socket: Socket| {

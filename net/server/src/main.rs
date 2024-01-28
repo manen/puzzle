@@ -69,9 +69,9 @@ async fn main() -> anyhow::Result<()> {
 	// 	.serve(app.into_make_service())
 	// 	.await?;
 
-	let listener = tokio::net::TcpListener::bind(puzzle_common::CONFIG.addr.as_ref()).await?;
+	let listener = tokio::net::TcpListener::bind(net_common::ADDR).await?;
 	axum::serve(listener, app).await?;
-	log::info!("server running on {}", puzzle_common::CONFIG.addr);
+	log::info!("server running on {}", net_common::ADDR);
 
 	Ok(())
 }
