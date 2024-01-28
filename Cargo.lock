@@ -1473,6 +1473,7 @@ dependencies = [
  "bincode",
  "log",
  "net_common",
+ "puzzle_common",
  "serde",
  "serde_json",
  "simple_logger",

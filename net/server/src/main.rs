@@ -65,9 +65,13 @@ async fn main() -> anyhow::Result<()> {
 		.route("/", get(|| async { "websocket magic" }))
 		.layer(layer);
 
-	axum::Server::bind(&"0.0.0.0:4200".parse().unwrap())
-		.serve(app.into_make_service())
-		.await?;
+	// axum::Server::bind(&"0.0.0.0:4200".parse().unwrap())
+	// 	.serve(app.into_make_service())
+	// 	.await?;
+
+	let listener = tokio::net::TcpListener::bind(puzzle_common::CONFIG.addr.as_ref()).await?;
+	axum::serve(listener, app).await?;
+	log::info!("server running on {}", puzzle_common::CONFIG.addr);
 
 	Ok(())
 }
