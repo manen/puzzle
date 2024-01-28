@@ -62,10 +62,10 @@ async fn main() -> anyhow::Result<()> {
 	io.ns("/", on_connect);
 
 	let app = axum::Router::new()
-		.route("/", get(|| async { "cso gadzsi" }))
+		.route("/", get(|| async { "websocket magic" }))
 		.layer(layer);
 
-	axum::Server::bind(&"127.0.0.1:4200".parse().unwrap())
+	axum::Server::bind(&"0.0.0.0:4200".parse().unwrap())
 		.serve(app.into_make_service())
 		.await?;
 
