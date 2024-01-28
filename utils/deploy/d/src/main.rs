@@ -6,10 +6,9 @@ use socketioxide::{
 	SocketIo,
 };
 use std::{
-	borrow::{Borrow, BorrowMut},
-	cell::RefCell,
+	borrow::BorrowMut,
 	process::{Child, Command},
-	sync::{Arc, Mutex},
+	sync::Mutex,
 };
 
 macro_rules! handle {
@@ -57,9 +56,13 @@ async fn on_connect(socket: SocketRef) {
 	socket.on("message", message);
 }
 async fn message(socket: SocketRef, bin: Bin) {
-	handle!(real_message(socket, bin).await);
+	let resp: deploy_common::Resp = real_message(bin).await.map_err(|err| format!("{err}"));
+	match bincode::serialize(&resp) {
+		Ok(encoded) => handle!(socket.bin(vec![encoded]).emit("message", [] as [u8; 0])),
+		Err(err) => log::error!("{err}"),
+	}
 }
-async fn real_message(socket: SocketRef, Bin(bin): Bin) -> anyhow::Result<()> {
+async fn real_message(Bin(bin): Bin) -> anyhow::Result<()> {
 	let messages = bin.into_iter().map(|bin| bincode::deserialize(&bin));
 
 	for res in messages {
