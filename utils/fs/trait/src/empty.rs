@@ -9,8 +9,7 @@ impl Fs for EmptyFs {
 	type Socket = EmptySocket;
 
 	fn read_dir(&self, path: &str) -> Result<Self::ReadDir> {
-		crate::error::abs_check(path)?;
-		if path == "/" {
+		if path == "/" || path == "" {
 			Ok(iter::empty())
 		} else {
 			Err(Error::NotFound {
@@ -19,8 +18,7 @@ impl Fs for EmptyFs {
 		}
 	}
 	fn open(&self, path: &str) -> Result<Self::Socket> {
-		crate::error::abs_check(path)?;
-		if crate::abs::remove_tail(path) == "" {
+		if path == "/" || path == "" {
 			Err(crate::Error::DirOpen {
 				path_abs: path.to_owned(),
 			})
@@ -59,5 +57,5 @@ impl io::Read for EmptySocket {
 impl crate::Socket for EmptySocket {}
 
 pub fn empty() -> EmptyFs {
-	EmptyFs::default()
+	EmptyFs
 }

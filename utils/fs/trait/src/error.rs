@@ -5,10 +5,6 @@ pub mod prelude {
 	pub use super::Propagate;
 }
 
-pub trait Propagate: Sized {
-	fn propagate(self, path: &str) -> Self;
-}
-
 #[derive(Clone, Debug, Error)]
 pub enum Error {
 	#[error("{err} (propagated from: {original})")]
@@ -19,6 +15,11 @@ pub enum Error {
 	DirOpen { path_abs: String },
 	#[error("not an absolute path: {path}")]
 	NotAbs { path: String },
+}
+pub type Result<T> = std::result::Result<T, Error>;
+
+pub trait Propagate: Sized {
+	fn propagate(self, path: &str) -> Self;
 }
 impl Propagate for Error {
 	fn propagate(self, path: &str) -> Self {
@@ -64,5 +65,3 @@ pub fn abs_check<'a, S: Into<Cow<'a, str>>>(path: S) -> Result<()> {
 		})
 	}
 }
-
-pub type Result<T> = std::result::Result<T, Error>;
