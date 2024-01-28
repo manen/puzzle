@@ -2,7 +2,6 @@ use anyhow::anyhow;
 use std::{env, fs};
 
 pub fn systemd() -> anyhow::Result<()> {
-	let arg0 = env::args().next().ok_or_else(|| anyhow!("no arg0"))?;
 	let home = env::var("HOME")?;
 
 	let service_path = format!("{home}/.config/systemd/user/deployd.service");
