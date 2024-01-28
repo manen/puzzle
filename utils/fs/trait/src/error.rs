@@ -57,7 +57,7 @@ impl<T, E: Propagate> Propagate for std::result::Result<T, E> {
 
 pub fn abs_check<'a, S: Into<Cow<'a, str>>>(path: S) -> Result<()> {
 	let path = path.into();
-	if path.starts_with("/") {
+	if path.starts_with("/") || path == "" {
 		Ok(())
 	} else {
 		Err(Error::NotAbs {

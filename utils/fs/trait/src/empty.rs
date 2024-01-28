@@ -54,7 +54,6 @@ impl io::Read for EmptySocket {
 		))
 	}
 }
-impl crate::Socket for EmptySocket {}
 
 pub fn empty() -> EmptyFs {
 	EmptyFs

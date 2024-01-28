@@ -726,6 +726,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "fs_socketio_client"
+version = "0.1.0"
+dependencies = [
+ "fs_socketio_common",
+ "fs_trait",
+ "rust_socketio",
+]
+
+[[package]]
+name = "fs_socketio_common"
+version = "0.1.0"
+
+[[package]]
+name = "fs_socketio_server"
+version = "0.1.0"
+dependencies = [
+ "fs_socketio_common",
+]
+
+[[package]]
 name = "fs_trait"
 version = "0.1.0"
 dependencies = [

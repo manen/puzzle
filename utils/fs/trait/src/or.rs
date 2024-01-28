@@ -31,7 +31,6 @@ impl<A: crate::Socket, B: crate::Socket> io::Read for SocketOr<A, B> {
 		}
 	}
 }
-impl<A: crate::Socket, B: crate::Socket> crate::Socket for SocketOr<A, B> {}
 
 pub trait IntoSocketOr: crate::Socket + Sized {
 	fn a<B: crate::Socket>(self) -> SocketOr<Self, B> {

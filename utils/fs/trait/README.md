@@ -11,4 +11,4 @@ let fs = crate::empty().mount_file("README.md", "# hello world!".as_bytes().read
 notes:
 
 - designed for use with `/`
-- uses root slash (is that what they call it? whatever its just `/xd.txt` instead of `xd.txt`, can be worked around using `fs.abs()`)
+- uses absolute paths (in all places not too unconvenient)

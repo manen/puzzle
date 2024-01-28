@@ -40,7 +40,6 @@ impl<R: io::Read> io::Write for ReadOnly<R> {
 		))
 	}
 }
-impl<R: io::Read> crate::Socket for ReadOnly<R> {}
 
 #[derive(Copy, Clone, Debug)]
 pub struct WriteOnly<W: io::Write> {
@@ -62,4 +61,3 @@ impl<W: io::Write> io::Write for WriteOnly<W> {
 		self.w.flush()
 	}
 }
-impl<W: io::Write> crate::Socket for WriteOnly<W> {}

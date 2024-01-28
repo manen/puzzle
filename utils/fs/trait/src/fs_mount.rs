@@ -43,6 +43,7 @@ impl<A: crate::Fs, B: crate::Fs> crate::Fs for FsMount<A, B> {
 	type Socket = or::SocketOr<A::Socket, B::Socket>;
 
 	fn read_dir(&self, path: &str) -> Result<Self::ReadDir> {
+		crate::error::abs_check(path)?;
 		if path.starts_with(&self.path) {
 			Ok(ReadDir::B {
 				iter: self
@@ -59,6 +60,7 @@ impl<A: crate::Fs, B: crate::Fs> crate::Fs for FsMount<A, B> {
 		}
 	}
 	fn open(&self, path: &str) -> Result<Self::Socket> {
+		crate::error::abs_check(path)?;
 		if path.starts_with(&self.path) {
 			Ok(self.b.open(&path.replacen(&self.path, "", 1))?.b())
 		} else {

@@ -15,7 +15,7 @@ log.workspace = true
 net_common.workspace = true
 puzzle_common.workspace = true
 
-rust_socketio = "0.4.2"
-serde = { workspace = true, features = ["derive"] }
+rust_socketio.workspace = true
+serde.workspace = true
 serde_json.workspace = true
 thiserror.workspace = true

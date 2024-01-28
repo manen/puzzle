@@ -65,3 +65,4 @@ pub trait Fs: Sized {
 /// socket details: there is no write and read universal specification, every file/socket gets to decide what to do
 /// with its own writes and reads, they might append to a file, they might be sent over a network, they might be decoded and set as a variable for something who knows
 pub trait Socket: Write + Read {}
+impl<T: Write + Read> Socket for T {}

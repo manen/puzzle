@@ -19,9 +19,11 @@ where
 	type Socket = or::SocketOr<Fs::Socket, S>;
 
 	fn read_dir(&self, path: &str) -> Result<Self::ReadDir> {
+		crate::error::abs_check(path)?;
 		Ok(self.fs.read_dir(path)?.chain(iter::once(self.path.clone())))
 	}
 	fn open(&self, path: &str) -> Result<Self::Socket> {
+		crate::error::abs_check(path)?;
 		if self.path == path {
 			Ok(self.socket.clone().b())
 		} else {
