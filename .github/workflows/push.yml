@@ -2,7 +2,7 @@ name: push
 on:
   push:
     branches:
-      - '*'
+      - 'wasi'
 jobs:
   check:
     runs-on: self-hosted

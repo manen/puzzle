@@ -13,7 +13,7 @@ Description=deployd
 [Service]
 Type=simple
 StandardOutput=journal
-ExecStart={arg0}
+ExecStart=~/.cargo/bin/deployd
 
 [Install]
 WantedBy=default.target
