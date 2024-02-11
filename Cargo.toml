@@ -21,7 +21,7 @@ bash = { path =               "./utils/cli/bash" }
 iter_join = { path =          "./utils/iter/join" }
 iter_read_until = { path =    "./utils/iter/read_until" }
 quickiter = { path =          "./utils/iter/quickiter" }
-fs_trait = { path =           "./utils/fs/trait" }
+fs_trait = { path =           "./utils/fs/trait", features = ["serde"] }
 fs_socketio_common = { path = "./utils/fs/socketio_common" }
 deploy_common = { path =      "./utils/deploy/common" }
 

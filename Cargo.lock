@@ -778,6 +778,10 @@ dependencies = [
 [[package]]
 name = "fs_socketio_common"
 version = "0.1.0"
+dependencies = [
+ "fs_trait",
+ "serde",
+]
 
 [[package]]
 name = "fs_socketio_server"
@@ -790,6 +794,7 @@ dependencies = [
 name = "fs_trait"
 version = "0.1.0"
 dependencies = [
+ "serde",
  "thiserror",
 ]
 

@@ -5,6 +5,7 @@ pub mod prelude {
 	pub use super::Propagate;
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Debug, Error)]
 pub enum Error {
 	#[error("{err} (propagated from: {original})")]
