@@ -1,4 +1,7 @@
-use std::io::{Read, Write};
+use std::{
+	future::Future,
+	io::{Read, Write},
+};
 
 pub mod abs;
 pub mod empty;
@@ -31,9 +34,9 @@ pub trait Fs: Sized {
 	type Socket: Socket;
 
 	/// read_dir returns an iterator over absolute paths of items in the directory
-	fn read_dir(&self, path: &str) -> Result<Self::ReadDir>;
+	fn read_dir(&self, path: &str) -> impl Future<Output = Result<Self::ReadDir>>;
 	/// open opens a socket to a given path
-	fn open(&self, path: &str) -> Result<Self::Socket>;
+	fn open(&self, path: &str) -> impl Future<Output = Result<Self::Socket>>;
 
 	// - modifier functions
 	/// mount a file on top of this filesystem

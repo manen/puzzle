@@ -787,7 +787,13 @@ dependencies = [
 name = "fs_socketio_server"
 version = "0.1.0"
 dependencies = [
+ "axum",
+ "bincode",
  "fs_socketio_common",
+ "fs_trait",
+ "log",
+ "socketioxide",
+ "tokio",
 ]
 
 [[package]]
@@ -796,6 +802,7 @@ version = "0.1.0"
 dependencies = [
  "serde",
  "thiserror",
+ "tokio",
 ]
 
 [[package]]

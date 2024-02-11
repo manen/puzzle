@@ -1,5 +1,5 @@
 use crate::Result;
-use std::borrow::Cow;
+use std::{borrow::Cow, future::Future};
 
 pub fn remove_tail<'a, P: Into<Cow<'a, str>>>(path: P) -> Cow<'a, str> {
 	let path = path.into();
@@ -38,10 +38,12 @@ impl<F: crate::Fs> crate::Fs for Abs<F> {
 	type ReadDir = F::ReadDir;
 	type Socket = F::Socket;
 
-	fn read_dir(&self, path: &str) -> Result<Self::ReadDir> {
-		self.fs.read_dir(&remove_tail(absify(path)))
+	fn read_dir(&self, path: &str) -> impl Future<Output = Result<Self::ReadDir>> {
+		let abs = absify(path);
+		async { self.fs.read_dir(&remove_tail(abs)).await }
 	}
-	fn open(&self, path: &str) -> Result<Self::Socket> {
-		self.fs.open(&remove_tail(absify(path)))
+	fn open(&self, path: &str) -> impl Future<Output = Result<Self::Socket>> {
+		let abs = absify(path);
+		async { self.fs.open(&remove_tail(abs)).await }
 	}
 }

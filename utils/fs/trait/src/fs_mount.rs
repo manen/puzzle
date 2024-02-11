@@ -1,3 +1,5 @@
+use std::future::Future;
+
 use crate::{or, prelude::*, IntoSocketOr, Result};
 
 #[derive(Clone, Debug)]
@@ -42,29 +44,34 @@ impl<A: crate::Fs, B: crate::Fs> crate::Fs for FsMount<A, B> {
 	type ReadDir = ReadDir<A::ReadDir, B::ReadDir>;
 	type Socket = or::SocketOr<A::Socket, B::Socket>;
 
-	fn read_dir(&self, path: &str) -> Result<Self::ReadDir> {
-		crate::error::abs_check(path)?;
-		if path.starts_with(&self.path) {
-			Ok(ReadDir::B {
-				iter: self
-					.b
-					.read_dir(&path.replacen(&self.path, "", 1))
-					.propagate(&self.path)?,
-				path: self.path.clone(),
-			})
-		} else {
-			Ok(ReadDir::A {
-				iter: self.a.read_dir(path).propagate(&self.path)?,
-				path: Some(self.path.clone()),
-			})
+	fn read_dir(&self, path: &str) -> impl Future<Output = Result<Self::ReadDir>> {
+		async move {
+			crate::error::abs_check(path)?;
+			if path.starts_with(&self.path) {
+				Ok(ReadDir::B {
+					iter: self
+						.b
+						.read_dir(&path.replacen(&self.path, "", 1))
+						.await
+						.propagate(&self.path)?,
+					path: self.path.clone(),
+				})
+			} else {
+				Ok(ReadDir::A {
+					iter: self.a.read_dir(path).await.propagate(&self.path)?,
+					path: Some(self.path.clone()),
+				})
+			}
 		}
 	}
-	fn open(&self, path: &str) -> Result<Self::Socket> {
-		crate::error::abs_check(path)?;
-		if path.starts_with(&self.path) {
-			Ok(self.b.open(&path.replacen(&self.path, "", 1))?.b())
-		} else {
-			Ok(self.a.open(path)?.a())
+	fn open(&self, path: &str) -> impl Future<Output = Result<Self::Socket>> {
+		async move {
+			crate::error::abs_check(path)?;
+			if path.starts_with(&self.path) {
+				Ok(self.b.open(&path.replacen(&self.path, "", 1)).await?.b())
+			} else {
+				Ok(self.a.open(path).await?.a())
+			}
 		}
 	}
 }

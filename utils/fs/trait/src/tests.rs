@@ -2,26 +2,29 @@ use std::io;
 
 use crate::prelude::*;
 
+#[tokio::main]
 #[test]
-fn empty() {
-	assert!(crate::empty().read_dir("leszarni").is_err());
+async fn empty() {
+	assert!(crate::empty().read_dir("leszarni").await.is_err());
 }
 
+#[tokio::main]
 #[test]
-fn file_mount() {
+async fn file_mount() {
 	let fs = crate::empty()
 		.mount_file("/csoki.txt", "csocs".as_bytes().read_only())
 		.abs();
 
-	assert!(fs.open("csocs").is_err());
+	assert!(fs.open("csocs").await.is_err());
 	assert_eq!(
-		io::read_to_string(fs.open("csoki.txt").unwrap()).unwrap(),
+		io::read_to_string(fs.open("csoki.txt").await.unwrap()).unwrap(),
 		"csocs"
 	);
 }
 
+#[tokio::main]
 #[test]
-fn fs_mount() {
+async fn fs_mount() {
 	let inner = crate::empty()
 		.mount_file(
 			"/belso_geci.txt",
@@ -35,13 +38,14 @@ fn fs_mount() {
 		.abs();
 
 	assert_eq!(
-		a.read_dir("/").unwrap().collect::<Vec<_>>(),
+		a.read_dir("/").await.unwrap().collect::<Vec<_>>(),
 		vec!["/csocs.txt", "/fasz.txt", "/inner"]
 	);
 }
 
+#[tokio::main]
 #[test]
-fn remove_tail() {
+async fn remove_tail() {
 	assert_eq!(crate::abs::remove_tail("csocs"), "csocs");
 	assert_eq!(crate::abs::remove_tail("csocsok/"), "csocsok");
 	assert_eq!(
@@ -54,8 +58,9 @@ fn remove_tail() {
 	);
 }
 
+#[tokio::main]
 #[test]
-fn add_tail() {
+async fn add_tail() {
 	assert_eq!(crate::abs::add_tail("csocs"), "csocs/");
 	assert_eq!(crate::abs::add_tail("csocsok/"), "csocsok/");
 	assert_eq!(
@@ -68,8 +73,9 @@ fn add_tail() {
 	);
 }
 
+#[tokio::main]
 #[test]
-fn ridiculously_complicated() {
+async fn ridiculously_complicated() {
 	let fs = crate::empty()
 		.mount_file("/atoms", b"vibrating and shit".read_only())
 		.mount_fs(
@@ -86,7 +92,7 @@ fn ridiculously_complicated() {
 		);
 
 	assert_eq!(
-		fs.read_dir("/").unwrap().collect::<Vec<_>>(),
+		fs.read_dir("/").await.unwrap().collect::<Vec<_>>(),
 		vec!["/atoms", "/earth"]
 	);
 
@@ -95,6 +101,7 @@ fn ridiculously_complicated() {
 
 	assert_eq!(
 		fs.read_dir("/earth")
+			.await
 			.map_err(|err| format!("{err}"))
 			.unwrap()
 			.collect::<Vec<_>>(),
@@ -102,6 +109,7 @@ fn ridiculously_complicated() {
 	);
 	assert_eq!(
 		fs.read_dir("/earth/peter_griffin/")
+			.await
 			.unwrap()
 			.collect::<Vec<_>>(),
 		vec!["/earth/peter_griffin/name", "/earth/peter_griffin/age"]

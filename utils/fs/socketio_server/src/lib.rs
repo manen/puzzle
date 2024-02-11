@@ -1,14 +1,19 @@
-pub fn add(left: usize, right: usize) -> usize {
-	left + right
-}
+// use socketioxide::extract::Bin;
 
-#[cfg(test)]
-mod tests {
-	use super::*;
+// pub trait BindFs {
+// 	fn bind_fs<Fs: fs_trait::Fs>(&self, ns: &str, fs: Fs);
+// }
+// impl<A: socketioxide::adapter::Adapter> BindFs for socketioxide::SocketIo<A> {
+// 	fn bind_fs<Fs: fs_trait::Fs>(&self, ns: &str, fs: Fs) {
+// 		let on_connect = |socket: socketioxide::extract::SocketRef| async {
+// 			socket.on(
+// 				"message",
+// 				|socket: socketioxide::extract::SocketRef, Bin(bin)| {
+// 					fs.open(path)
+// 				},
+// 			);
+// 		};
 
-	#[test]
-	fn it_works() {
-		let result = add(2, 2);
-		assert_eq!(result, 4);
-	}
-}
+// 		self.ns(ns, on_connect);
+// 	}
+// }

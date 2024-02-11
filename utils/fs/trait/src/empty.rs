@@ -8,7 +8,7 @@ impl Fs for EmptyFs {
 	type ReadDir = iter::Empty<String>;
 	type Socket = EmptySocket;
 
-	fn read_dir(&self, path: &str) -> Result<Self::ReadDir> {
+	async fn read_dir(&self, path: &str) -> Result<Self::ReadDir> {
 		if path == "/" || path == "" {
 			Ok(iter::empty())
 		} else {
@@ -17,7 +17,7 @@ impl Fs for EmptyFs {
 			})
 		}
 	}
-	fn open(&self, path: &str) -> Result<Self::Socket> {
+	async fn open(&self, path: &str) -> Result<Self::Socket> {
 		if path == "/" || path == "" {
 			Err(crate::Error::DirOpen {
 				path_abs: path.to_owned(),
