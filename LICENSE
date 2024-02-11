@@ -1,22 +1,39 @@
-DontStealMyShit License 1.0
+# puzzle license 1.0
 
-This work is licensed under the DontStealMyShit License 1.0.
+## puzzle free license
 
-You are permitted to:
-- Use the work for personal purposes.
+the puzzle free license applies to all ip in this repository contained in the following directories:
 
-You are not allowed to:
-- Edit, modify, or create derivative works based on the work.
-- Share or distribute the work in any form or medium.
-- Sell or commercially exploit the work.
+- [`common`](common)
+- [`glue`](glue)
+- [`utils`](utils)
 
-All other rights are expressly reserved by the copyright owner.
+licensing terms:
 
-This license is effective until terminated. The copyright owner reserves the right to terminate this license at any time if you breach its terms.
+1. public forks of puzzle free licensed techonology must include a link to [the official puzzle repository](https://github.com/manen/puzzle) in the README file of the fork repository
 
-By exercising any of the rights granted above, you accept and agree to be bound by the terms of this license.
+2. other user-facing software utilizing puzzle free licensed technology must include a link to [the official puzzle repository](https://github.com/manen/puzzle) in the program or application
 
-To obtain additional permissions or for any questions regarding this license, please contact the copyright owner at [Your Contact Information].
+## puzzle protected license
 
-[Your Name]
-[Date]
+the puzzle protected license applies to all ip in this repository contained in the following directories:
+
+- [`apps`](apps)
+- [`runners`](runners)
+- [`net`](net)
+
+this license permits you to:
+
+- view and compile source code
+- modify source code, where all your modifications are puzzle protected licensed
+- redistribute source code as a pull request into [the official puzzle repository](https://github.com/manen/puzzle)
+
+this license forbids you from:
+
+- redistributing any modified source code from works under this license or binaries resulting from such source code in any other channel than [the official puzzle repository](https://github.com/manen/puzzle)
+- using any source code under this license or modifications of such code or binaries resulting from such source code for commercial purposes
+
+this license permits [manen](https://github.com/manen) to:
+
+- use, run and distribute all source code and resulting binaries for both commercial and noncommercial purposes
+- change the terms of this license or change the license of all puzzle protected licensed works at any time
