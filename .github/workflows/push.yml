@@ -27,21 +27,23 @@ jobs:
       - name: cargo test
         run: cargo test
 
-  deployd:
-    needs: test
-    runs-on: self-hosted
-    steps:
-      - uses: actions/checkout@v4
-      - name: create target symlink
-        run: |
-          ln -s /target ./target
+  # # the reason all this is commented out is because we can't interact with systemctl
+  # # from the actions shell or something idk but deployd updates will have to be manual sadly 
+  #
+  # deployd:
+  #   needs: test
+  #   runs-on: self-hosted
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: create target symlink
+  #       run: |
+  #         ln -s /target ./target
 
-      - name: cargo install deployd
-        run: cargo install --path utils/deploy/d
-      - run: deployd --systemd
+  #     - name: cargo install deployd
+  #       run: cargo install --path utils/deploy/d
 
-      - name: cargo install deployctl
-        run: cargo install --path utils/deploy/ctl
+  #     - name: cargo install deployctl
+  #       run: cargo install --path utils/deploy/ctl
 
   server:
     needs: deployd
