@@ -6,8 +6,10 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+anyhow.workspace = true
 axum.workspace = true
 bincode.workspace = true
+fastrand = "2.0.1"
 fs_socketio_common.workspace = true
 fs_trait.workspace = true
 log.workspace = true

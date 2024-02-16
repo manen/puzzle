@@ -10,5 +10,5 @@ let fs = crate::empty().mount_file("README.md", "# hello world!".as_bytes().read
 
 notes:
 
-- designed for use with `/`
+- designed for use with fw slash `/`
 - uses absolute paths (in all places not too unconvenient)

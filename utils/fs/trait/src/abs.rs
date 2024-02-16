@@ -34,15 +34,15 @@ pub fn absify<'a, P: Into<Cow<'a, str>>>(path: P) -> Cow<'a, str> {
 pub struct Abs<F: crate::Fs> {
 	pub(crate) fs: F,
 }
-impl<F: crate::Fs> crate::Fs for Abs<F> {
+impl<F: crate::Fs + Send + Sync> crate::Fs for Abs<F> {
 	type ReadDir = F::ReadDir;
 	type Socket = F::Socket;
 
-	fn read_dir(&self, path: &str) -> impl Future<Output = Result<Self::ReadDir>> {
+	fn read_dir(&self, path: &str) -> impl Future<Output = Result<Self::ReadDir>> + Send {
 		let abs = absify(path);
 		async { self.fs.read_dir(&remove_tail(abs)).await }
 	}
-	fn open(&self, path: &str) -> impl Future<Output = Result<Self::Socket>> {
+	fn open(&self, path: &str) -> impl Future<Output = Result<Self::Socket>> + Send {
 		let abs = absify(path);
 		async { self.fs.open(&remove_tail(abs)).await }
 	}

@@ -12,13 +12,13 @@ pub struct FileMount<Fs: crate::Fs, S: crate::Socket> {
 }
 impl<Fs, S> crate::Fs for FileMount<Fs, S>
 where
-	Fs: crate::Fs,
-	S: crate::Socket + Clone,
+	Fs: crate::Fs + Send + Sync,
+	S: crate::Socket + Clone + Send + Sync,
 {
 	type ReadDir = iter::Chain<Fs::ReadDir, iter::Once<String>>;
 	type Socket = or::SocketOr<Fs::Socket, S>;
 
-	fn read_dir(&self, path: &str) -> impl Future<Output = Result<Self::ReadDir>> {
+	fn read_dir(&self, path: &str) -> impl Future<Output = Result<Self::ReadDir>> + Send {
 		async move {
 			crate::error::abs_check(path)?;
 			Ok(self
@@ -28,7 +28,7 @@ where
 				.chain(iter::once(self.path.clone())))
 		}
 	}
-	fn open(&self, path: &str) -> impl Future<Output = Result<Self::Socket>> {
+	fn open(&self, path: &str) -> impl Future<Output = Result<Self::Socket>> + Send {
 		async move {
 			crate::error::abs_check(path)?;
 			if self.path == path {

@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 fs_trait.workspace = true
 serde.workspace = true
+thiserror.workspace = true

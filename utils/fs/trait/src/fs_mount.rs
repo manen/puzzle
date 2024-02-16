@@ -40,11 +40,11 @@ pub struct FsMount<A: crate::Fs, B: crate::Fs> {
 	pub(crate) path: String,
 	pub(crate) b: B,
 }
-impl<A: crate::Fs, B: crate::Fs> crate::Fs for FsMount<A, B> {
+impl<A: crate::Fs + Send + Sync, B: crate::Fs + Send + Sync> crate::Fs for FsMount<A, B> {
 	type ReadDir = ReadDir<A::ReadDir, B::ReadDir>;
 	type Socket = or::SocketOr<A::Socket, B::Socket>;
 
-	fn read_dir(&self, path: &str) -> impl Future<Output = Result<Self::ReadDir>> {
+	fn read_dir(&self, path: &str) -> impl Future<Output = Result<Self::ReadDir>> + Send {
 		async move {
 			crate::error::abs_check(path)?;
 			if path.starts_with(&self.path) {
@@ -64,7 +64,7 @@ impl<A: crate::Fs, B: crate::Fs> crate::Fs for FsMount<A, B> {
 			}
 		}
 	}
-	fn open(&self, path: &str) -> impl Future<Output = Result<Self::Socket>> {
+	fn open(&self, path: &str) -> impl Future<Output = Result<Self::Socket>> + Send {
 		async move {
 			crate::error::abs_check(path)?;
 			if path.starts_with(&self.path) {

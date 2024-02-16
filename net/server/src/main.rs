@@ -1,5 +1,7 @@
 use anyhow::anyhow;
 use axum::routing::get;
+use fs_socketio_server::BindFs;
+use fs_trait::prelude::*;
 use socketioxide::{
 	extract::{Bin, SocketRef},
 	SocketIo,
@@ -60,6 +62,10 @@ async fn main() -> anyhow::Result<()> {
 
 	let (layer, io) = SocketIo::new_layer();
 	io.ns("/", on_connect);
+	io.bind_fs(
+		"/fs",
+		fs_trait::empty().mount_file("README.md", "# did i do it?".as_bytes().read_only()),
+	);
 
 	let app = axum::Router::new()
 		.route("/", get(|| async { "websocket magic" }))
