@@ -17,23 +17,27 @@ ExecStart={home}/.cargo/bin/deployd
 WantedBy=default.target
 "
 	);
-	let replace = match fs::metadata(&service_path) {
+	let (replace, existed) = match fs::metadata(&service_path) {
 		Ok(_) => {
 			let content = fs::read_to_string(&service_path)?;
 			if content == service {
-				false
+				(false, true)
 			} else {
 				fs::remove_file(&service_path)?;
-				true
+				(true, true)
 			}
 		}
-		Err(_) => true,
+		Err(_) => (true, false),
 	};
 	if replace {
 		fs::write(&service_path, service)?;
+	}
+	if !existed {
 		bash::run("systemctl --user enable deployd.service")?;
 		bash::run("systemctl --user start deployd.service")?;
 		bash::run("systemctl --user status deployd.service")?;
+	} else {
+		bash::run("systemctl --user restart deployd.service")?;
 	}
 
 	Ok(())

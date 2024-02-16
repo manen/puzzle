@@ -1,11 +1,11 @@
 use anyhow::anyhow;
-use axum::routing::get;
 use fs_socketio_server::BindFs;
 use fs_trait::prelude::*;
 use socketioxide::{
 	extract::{Bin, SocketRef},
 	SocketIo,
 };
+use tower_http::services::ServeDir;
 
 macro_rules! handle {
 	($err:expr) => {
@@ -68,7 +68,7 @@ async fn main() -> anyhow::Result<()> {
 	);
 
 	let app = axum::Router::new()
-		.route("/", get(|| async { "websocket magic" }))
+		.nest_service("/", ServeDir::new("static"))
 		.layer(layer);
 
 	// axum::Server::bind(&"0.0.0.0:4200".parse().unwrap())

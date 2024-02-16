@@ -7,4 +7,8 @@ dev = "run build-dev && run build-desktop && RUST_LOG=info target/debug/puzzle r
 
 install-desktop = "cargo install --path=runners/desktop"
 
-server = "cargo run --manifest-path net/server/Cargo.toml --release"
+server = "cargo build --manifest-path net/server/Cargo.toml"
+web = "cd runners/web && trunk build"
+dist = "run web --release && rm -r dist && mkdir -p dist && cp -r runners/web/dist dist/static && run server --release && cp target/release/net_server dist/net_server"
+
+deploy_local = "run dist && cargo run --manifest-path utils/deploy/ctl/Cargo.toml -- dist-dir ../../../dist net_server"

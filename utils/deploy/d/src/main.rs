@@ -1,6 +1,7 @@
 use anyhow::anyhow;
 use axum::routing::get;
 use clap::Parser;
+use deploy_common::Ctl;
 use once_cell::sync::Lazy;
 use socketioxide::{
 	extract::{Bin, SocketRef},
@@ -8,6 +9,8 @@ use socketioxide::{
 };
 use std::{
 	borrow::BorrowMut,
+	fs,
+	path::PathBuf,
 	process::{Child, Command},
 	sync::Mutex,
 };
@@ -29,7 +32,11 @@ macro_rules! handle {
 
 #[derive(Debug)]
 enum State {
+	/// stopped represents a state where no child process is running. the .deploy directory's contents are not guaranteed to be anything
 	Stopped,
+	/// started represents a state where a child process is running, and the .deploy directory is set up for that child process to run.
+	///
+	/// to edit the contents of the .deploy directory safely, the child process has to be killed
 	Started(Child),
 }
 static STATE: Lazy<Mutex<State>> = Lazy::new(|| Mutex::new(State::Stopped));
@@ -85,16 +92,29 @@ async fn real_message(Bin(bin): Bin) -> anyhow::Result<()> {
 
 	for res in messages {
 		let message: deploy_common::Ctl = res?;
-		log::info!("{message:?}");
 
 		let launch_new = || {
-			let path = message.x.to_string_lossy();
-			Command::new(path.as_ref()).spawn()
+			log::info!("launching: {message:?}");
+			let tmp_dir = reset_dir()?;
+			let static_path = match &message {
+				Ctl::Executable { path } => {
+					let static_path = tmp_dir.join(&path);
+					fs::create_dir_all(&tmp_dir)?;
+					fs::copy(&path, &static_path)?;
+					static_path
+				}
+				Ctl::DistDir { dir, exec_rel } => {
+					let static_path = tmp_dir.join(exec_rel);
+					copy_dir::copy_dir(dir, &tmp_dir)?;
+					static_path
+				}
+			};
+			Ok::<_, anyhow::Error>(Command::new(&static_path).current_dir(&tmp_dir).spawn()?)
 		};
 
 		{
-			let mut state_changer = STATE.lock().unwrap();
-			let a = (*state_changer).borrow_mut();
+			let mut state = STATE.lock().unwrap();
+			let a = (*state).borrow_mut();
 			*a = match a {
 				State::Stopped => State::Started(launch_new()?),
 				State::Started(child) => {
@@ -102,8 +122,18 @@ async fn real_message(Bin(bin): Bin) -> anyhow::Result<()> {
 					State::Started(launch_new()?)
 				}
 			};
-			log::info!("{a:?}");
 		}
 	}
 	Ok(())
+}
+
+/// reset_dir should only be called when the previous child process is killed
+pub fn reset_dir() -> anyhow::Result<PathBuf> {
+	let path = format!("{}/.deployd", std::env::var("HOME")?);
+
+	if let Ok(_) = fs::metadata(&path) {
+		fs::remove_dir_all(&path)?;
+	}
+
+	Ok(path.into())
 }
