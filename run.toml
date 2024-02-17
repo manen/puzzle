@@ -11,4 +11,4 @@ server = "cargo build --manifest-path net/server/Cargo.toml"
 web = "cd runners/web && trunk build"
 dist = "run web --release && if [ -d dist ]; then rm -r dist; fi && mkdir -p dist && cp -r runners/web/dist dist/static && run server --release && cp target/release/net_server dist/net_server"
 
-deploy_local = "run dist && cargo run --manifest-path utils/deploy/ctl/Cargo.toml -- dist-dir ../../../dist net_server"
+deploy_local = "run dist && cargo run --manifest-path utils/deploy/ctl/Cargo.toml -- dist-dir `realpath dist` net_server"
