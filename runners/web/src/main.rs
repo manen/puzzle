@@ -20,5 +20,11 @@ fn App() -> Html {
 }
 
 fn main() {
+	web_sys::window()
+		.unwrap()
+		.document()
+		.unwrap()
+		.set_title(puzzle_common::TITLE);
+
 	yew::Renderer::<App>::new().render();
 }

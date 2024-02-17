@@ -2187,6 +2187,10 @@ dependencies = [
 [[package]]
 name = "puzzle_common"
 version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "bash",
+]
 
 [[package]]
 name = "puzzle_log"
@@ -3625,6 +3629,8 @@ dependencies = [
 name = "web"
 version = "0.1.0"
 dependencies = [
+ "puzzle_common",
+ "web-sys",
  "yew",
 ]
 

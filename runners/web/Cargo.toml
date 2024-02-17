@@ -6,4 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+puzzle_common.workspace = true
+web-sys = { version = "0.3.68", features = ["Document"] }
 yew = { version = "0.21.0", features = ["csr"] }

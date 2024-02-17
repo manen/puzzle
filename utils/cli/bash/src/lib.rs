@@ -37,6 +37,7 @@ pub fn run<S: AsRef<str>>(cmd: S) -> Result<String> {
 	let mut child =
 		Command::new(pathsearch::find_executable_in_path("bash").ok_or(Error::NoBashInPath)?)
 			.stdin(Stdio::piped())
+			.stdout(Stdio::piped())
 			.current_dir(env::current_dir()?)
 			.spawn()?;
 	();
@@ -45,8 +46,10 @@ pub fn run<S: AsRef<str>>(cmd: S) -> Result<String> {
 		child_stdin.write_all(cmd.as_bytes())?
 	}
 	let out = child.wait_with_output()?;
+	let stdout = String::from_utf8(out.stdout)?.trim().to_string();
+
 	match out.status.code().ok_or(Error::NoExitCode)? {
-		0 => Ok(String::from_utf8(out.stdout)?),
+		0 => Ok(stdout),
 		code => Err(Error::FailedToRun {
 			cmd: cmd.to_owned(),
 			code,
