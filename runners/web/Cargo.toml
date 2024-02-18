@@ -7,5 +7,6 @@ edition = "2021"
 
 [dependencies]
 puzzle_common.workspace = true
+runners.workspace = true
 web-sys = { version = "0.3.68", features = ["Document"] }
 yew = { version = "0.21.0", features = ["csr"] }

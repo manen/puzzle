@@ -2181,6 +2181,7 @@ dependencies = [
  "log",
  "pathsearch",
  "pretty_env_logger",
+ "runners",
  "wasmtime_common",
 ]
 
@@ -2382,6 +2383,13 @@ dependencies = [
  "wasm-streams",
  "web-sys",
  "winreg",
+]
+
+[[package]]
+name = "runners"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
 ]
 
 [[package]]
@@ -3599,6 +3607,7 @@ dependencies = [
  "id",
  "log",
  "puzzle_log",
+ "runners",
  "thiserror",
  "wasmtime",
 ]
@@ -3630,6 +3639,7 @@ name = "web"
 version = "0.1.0"
 dependencies = [
  "puzzle_common",
+ "runners",
  "web-sys",
  "yew",
 ]

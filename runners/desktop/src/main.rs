@@ -98,5 +98,5 @@ fn main() {
 
 fn run(path: &Path) {
 	let wasm = fs::read(path).expect("failed to read file");
-	wasmtime_common::start(&wasm).expect("execution failed");
+	runners::start::<wasmtime_common::WasmtimeEngine>(&wasm).expect("execution failed");
 }

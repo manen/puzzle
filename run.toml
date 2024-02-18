@@ -1,14 +1,37 @@
-[scripts]
-build-desktop = "cargo build --manifest-path runners/desktop/Cargo.toml"
-build-dev = "cargo build --manifest-path apps/dev/Cargo.toml --target=wasm32-unknown-unknown"
+[debug]
+deployd = "cargo run --manifest-path utils/deploy/d/Cargo.toml"
+"apps/dev" = "run build apps/dev && run build desktop && RUST_LOG=info target/debug/puzzle run target/wasm32-unknown-unknown/debug/dev.wasm"
+web = "cd runners/web && trunk serve --open"
 
-watch-all = "cargo watch --watch runners/desktop --watch runners/wasmtime_common -s 'cargo run --manifest-path runners/desktop/Cargo.toml -- cargo-watch -C apps/dev -t target --watch sdk/puzzle_sdk_log'"
-dev = "run build-dev && run build-desktop && RUST_LOG=info target/debug/puzzle run target/wasm32-unknown-unknown/debug/dev.wasm"
+[build.desktop]
+index = "cargo build --manifest-path runners/desktop/Cargo.toml"
+release = "cargo build --manifest-path runners/desktop/Cargo.toml --release"
 
-install-desktop = "cargo install --path=runners/desktop"
+[build.web]
+index = "cd runners/web && trunk build"
+release = "cd runners/web && trunk build --release"
 
-server = "cargo build --manifest-path net/server/Cargo.toml"
-web = "cd runners/web && trunk build"
-dist = "run web --release && if [ -d dist ]; then rm -r dist; fi && mkdir -p dist && cp -r runners/web/dist dist/static && run server --release && cp target/release/net_server dist/net_server"
+[build."apps/dev"]
+index = "cargo build --manifest-path apps/dev/Cargo.toml --target=wasm32-unknown-unknown"
+release = "cargo build --manifest-path apps/dev/Cargo.toml --target=wasm32-unknown-unknown --release"
 
-deploy_local = "run dist && cargo run --manifest-path utils/deploy/ctl/Cargo.toml -- dist-dir `realpath dist` net_server"
+[build.server]
+index = "cargo build --manifest-path net/server/Cargo.toml"
+release = "cargo build --manifest-path net/server/Cargo.toml --release"
+
+[dist]
+index = """
+run build web release &&
+if [ -d dist ];
+	then rm -r dist;
+fi &&
+mkdir -p dist &&
+cp -r runners/web/dist dist/static &&
+run build server release &&
+cp target/release/net_server dist/net_server
+"""
+
+deploy = """
+run dist &&
+cargo run --manifest-path utils/deploy/ctl/Cargo.toml dist-dir `realpath dist` net_server
+"""

@@ -25,6 +25,8 @@ fs_trait = { path =           "./utils/fs/trait", features = ["serde"] }
 fs_socketio_common = { path = "./utils/fs/socketio_common" }
 deploy_common = { path =      "./utils/deploy/common" }
 
+runners = { path =            "./runners/common" }
+
 net_common = { path =         "./net/common" }
 
 wasmtime = "16.0.0"
