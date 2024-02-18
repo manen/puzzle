@@ -1,3 +1,5 @@
+pwd = "pwd"
+
 [debug]
 deployd = "cargo run --manifest-path utils/deploy/d/Cargo.toml"
 "apps/dev" = "run build apps/dev && run build desktop && RUST_LOG=info target/debug/puzzle run target/wasm32-unknown-unknown/debug/dev.wasm"
