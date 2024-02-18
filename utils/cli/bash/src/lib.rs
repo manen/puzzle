@@ -1,6 +1,7 @@
 use std::{
 	env,
 	io::{self, Write},
+	path::Path,
 	process::{Command, Stdio},
 	string::FromUtf8Error,
 };
@@ -33,12 +34,15 @@ pub enum Error {
 pub type Result<T> = std::result::Result<T, Error>;
 
 pub fn run<S: AsRef<str>>(cmd: S) -> Result<String> {
+	run_with_cwd(cmd, env::current_dir()?)
+}
+pub fn run_with_cwd(cmd: impl AsRef<str>, cwd: impl AsRef<Path>) -> Result<String> {
 	let cmd = cmd.as_ref();
 	let mut child =
 		Command::new(pathsearch::find_executable_in_path("bash").ok_or(Error::NoBashInPath)?)
 			.stdin(Stdio::piped())
 			.stdout(Stdio::piped())
-			.current_dir(env::current_dir()?)
+			.current_dir(cwd)
 			.spawn()?;
 	();
 	{
