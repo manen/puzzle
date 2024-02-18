@@ -31,6 +31,7 @@ run build server release &&
 cp target/release/net_server dist/net_server
 """
 
+# this only deployd locally btw
 deploy = """
 run dist &&
 cargo run --manifest-path utils/deploy/ctl/Cargo.toml dist-dir `realpath dist` net_server

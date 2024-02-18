@@ -55,4 +55,4 @@ jobs:
           ln -s /target ./target
       
       - name: compile web and deploy net_server
-        run: run deploy_local
+        run: run dist deploy
