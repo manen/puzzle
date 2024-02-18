@@ -15,10 +15,8 @@ pub enum Read<T> {
 	End(T),
 }
 
-pub trait IntoReader<'a> {
-	type Reader: Reader<'a>;
-
-	fn reader(&'a self) -> Self::Reader;
+pub trait IntoReader {
+	fn reader<'a>(&'a self) -> impl Reader<'a>;
 }
 pub trait Reader<'a> {
 	type Item;

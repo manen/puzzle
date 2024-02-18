@@ -2,7 +2,7 @@ use crate::{IntoReader, Read, Reader};
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct StrReader<'a> {
-	s: &'a str,
+	s: &'a str, // TODO rewrite this to use str.chars()
 	i: usize,
 }
 impl<'a> Reader<'a> for StrReader<'a> {
@@ -25,10 +25,9 @@ impl<'a> Reader<'a> for StrReader<'a> {
 	}
 }
 
-impl<'a> IntoReader<'a> for &'a str {
-	type Reader = StrReader<'a>;
-
-	fn reader(&'a self) -> Self::Reader {
+impl IntoReader for str {
+	#[allow(refining_impl_trait)]
+	fn reader<'a>(&'a self) -> StrReader<'a> {
 		StrReader { s: self, i: 0 }
 	}
 }

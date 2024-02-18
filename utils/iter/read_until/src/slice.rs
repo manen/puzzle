@@ -24,10 +24,9 @@ impl<'a, T> Reader<'a> for SliceReader<'a, T> {
 	}
 }
 
-impl<'a, T> IntoReader<'a> for &'a [T] {
-	type Reader = SliceReader<'a, T>;
-
-	fn reader(&'a self) -> SliceReader<'a, T> {
+impl<T> IntoReader for [T] {
+	#[allow(refining_impl_trait)]
+	fn reader<'a>(&'a self) -> SliceReader<'a, T> {
 		SliceReader {
 			slice: self.as_ref(),
 			i: 0,
