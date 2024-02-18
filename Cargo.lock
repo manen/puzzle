@@ -2390,6 +2390,7 @@ name = "runners"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "wasm_trait",
 ]
 
 [[package]]
@@ -3307,6 +3308,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "wasm_trait"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+]
+
+[[package]]
 name = "wasmparser"
 version = "0.118.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3609,6 +3617,7 @@ dependencies = [
  "puzzle_log",
  "runners",
  "thiserror",
+ "wasm_trait",
  "wasmtime",
 ]
 

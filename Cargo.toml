@@ -26,6 +26,7 @@ fs_socketio_common = { path = "./utils/fs/socketio_common" }
 deploy_common = { path =      "./utils/deploy/common" }
 
 runners = { path =            "./runners/common" }
+wasm_trait = { path =         "./runners/wasm_trait" }
 
 net_common = { path =         "./net/common" }
 

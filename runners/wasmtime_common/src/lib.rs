@@ -1,13 +1,12 @@
-use std::vec::IntoIter;
-
 use anyhow::anyhow;
-use runners::{Arg, Instance, Linker};
+use std::vec::IntoIter;
 use thiserror::Error;
+use wasm_trait::Arg;
 use wasmtime::{Engine, Module, Store};
 
 #[derive(Default)]
 pub struct WasmtimeEngine(Engine);
-impl runners::Engine for WasmtimeEngine {
+impl wasm_trait::Engine for WasmtimeEngine {
 	type Linker = WasmtimeLinker;
 
 	fn linker(&self, bin: &[u8]) -> anyhow::Result<Self::Linker> {
@@ -15,7 +14,6 @@ impl runners::Engine for WasmtimeEngine {
 		let store = Store::new(&self.0, Runtime::default());
 		let linker = wasmtime::Linker::new(&self.0);
 		Ok(WasmtimeLinker {
-			engine: self.0.clone(),
 			module,
 			store,
 			linker,
@@ -24,16 +22,15 @@ impl runners::Engine for WasmtimeEngine {
 }
 
 pub struct WasmtimeLinker {
-	engine: Engine,
 	module: Module,
 	store: Store<Runtime>,
 	linker: wasmtime::Linker<Runtime>,
 }
-impl runners::Linker for WasmtimeLinker {
+impl wasm_trait::Linker for WasmtimeLinker {
 	type Instance = WasmtimeInstance;
-	type Args = runners::IteratorArgs<IntoIter<runners::ArgDyn>>;
+	type Args = wasm_trait::IteratorArgs<IntoIter<wasm_trait::ArgDyn>>;
 
-	fn link<O: runners::Arg, F: Fn(Self::Args) -> O + Send + Sync + 'static>(
+	fn link<O: wasm_trait::Arg, F: Fn(Self::Args) -> O + Send + Sync + 'static>(
 		&mut self,
 		name: &str,
 		f: F,
@@ -44,23 +41,23 @@ impl runners::Linker for WasmtimeLinker {
 			wasmtime::FuncType::new(std::iter::empty(), std::iter::empty()),
 			move |_: wasmtime::Caller<'_, Runtime>, i, o| {
 				let args = i.into_iter().map(|val| match val {
-					wasmtime::Val::I32(num) => Ok(runners::ArgDyn::I32(*num)),
-					wasmtime::Val::I64(num) => Ok(runners::ArgDyn::I64(*num)),
-					wasmtime::Val::F32(num) => Ok(runners::ArgDyn::F32(f32::from_bits(*num))),
-					wasmtime::Val::F64(num) => Ok(runners::ArgDyn::F64(f64::from_bits(*num))),
-					wasmtime::Val::V128(num) => Ok(runners::ArgDyn::U128((*num).into())),
+					wasmtime::Val::I32(num) => Ok(wasm_trait::ArgDyn::I32(*num)),
+					wasmtime::Val::I64(num) => Ok(wasm_trait::ArgDyn::I64(*num)),
+					wasmtime::Val::F32(num) => Ok(wasm_trait::ArgDyn::F32(f32::from_bits(*num))),
+					wasmtime::Val::F64(num) => Ok(wasm_trait::ArgDyn::F64(f64::from_bits(*num))),
+					wasmtime::Val::V128(num) => Ok(wasm_trait::ArgDyn::U128((*num).into())),
 					_ => Err(anyhow!(
 						"funcrefs and externrefs can't be turned into an ArgDyn"
 					)),
 				});
 				let args = args.collect::<Result<Vec<_>, _>>()?;
-				let out = f(runners::IteratorArgs::new(args.into_iter()));
+				let out = f(wasm_trait::IteratorArgs::new(args.into_iter()));
 				o[0] = match out.arg_dyn() {
-					runners::ArgDyn::I32(num) => wasmtime::Val::I32(num),
-					runners::ArgDyn::I64(num) => wasmtime::Val::I64(num),
-					runners::ArgDyn::F32(num) => wasmtime::Val::F32(num.to_bits()),
-					runners::ArgDyn::F64(num) => wasmtime::Val::F64(num.to_bits()),
-					runners::ArgDyn::U128(num) => wasmtime::Val::V128(num.into()),
+					wasm_trait::ArgDyn::I32(num) => wasmtime::Val::I32(num),
+					wasm_trait::ArgDyn::I64(num) => wasmtime::Val::I64(num),
+					wasm_trait::ArgDyn::F32(num) => wasmtime::Val::F32(num.to_bits()),
+					wasm_trait::ArgDyn::F64(num) => wasmtime::Val::F64(num.to_bits()),
+					wasm_trait::ArgDyn::U128(num) => wasmtime::Val::V128(num.into()),
 				};
 				Ok(())
 			},
@@ -84,8 +81,8 @@ pub struct WasmtimeInstance {
 	store: Store<Runtime>,
 	instance: wasmtime::Instance,
 }
-impl runners::Instance for WasmtimeInstance {
-	fn call<I: runners::Args, O: runners::Arg>(
+impl wasm_trait::Instance for WasmtimeInstance {
+	fn call<I: wasm_trait::Args, O: wasm_trait::Arg>(
 		&mut self,
 		func: &str,
 		args: I,
@@ -93,11 +90,11 @@ impl runners::Instance for WasmtimeInstance {
 		let args = args
 			.args()
 			.map(|arg| match arg.arg_dyn() {
-				runners::ArgDyn::I32(num) => wasmtime::Val::I32(num),
-				runners::ArgDyn::I64(num) => wasmtime::Val::I64(num),
-				runners::ArgDyn::F32(num) => wasmtime::Val::F32(num.to_bits()),
-				runners::ArgDyn::F64(num) => wasmtime::Val::F64(num.to_bits()),
-				runners::ArgDyn::U128(num) => wasmtime::Val::V128(num.into()),
+				wasm_trait::ArgDyn::I32(num) => wasmtime::Val::I32(num),
+				wasm_trait::ArgDyn::I64(num) => wasmtime::Val::I64(num),
+				wasm_trait::ArgDyn::F32(num) => wasmtime::Val::F32(num.to_bits()),
+				wasm_trait::ArgDyn::F64(num) => wasmtime::Val::F64(num.to_bits()),
+				wasm_trait::ArgDyn::U128(num) => wasmtime::Val::V128(num.into()),
 			})
 			.collect::<Vec<_>>();
 		let func = self
@@ -108,11 +105,11 @@ impl runners::Instance for WasmtimeInstance {
 		func.call(&mut self.store, &args, &mut out)?;
 
 		Ok(match out[0] {
-			wasmtime::Val::I32(num) => Ok(runners::ArgDyn::I32(num)),
-			wasmtime::Val::I64(num) => Ok(runners::ArgDyn::I64(num)),
-			wasmtime::Val::F32(num) => Ok(runners::ArgDyn::F32(f32::from_bits(num))),
-			wasmtime::Val::F64(num) => Ok(runners::ArgDyn::F64(f64::from_bits(num))),
-			wasmtime::Val::V128(num) => Ok(runners::ArgDyn::U128(num.into())),
+			wasmtime::Val::I32(num) => Ok(wasm_trait::ArgDyn::I32(num)),
+			wasmtime::Val::I64(num) => Ok(wasm_trait::ArgDyn::I64(num)),
+			wasmtime::Val::F32(num) => Ok(wasm_trait::ArgDyn::F32(f32::from_bits(num))),
+			wasmtime::Val::F64(num) => Ok(wasm_trait::ArgDyn::F64(f64::from_bits(num))),
+			wasmtime::Val::V128(num) => Ok(wasm_trait::ArgDyn::U128(num.into())),
 			_ => Err(anyhow!(
 				"funcrefs and externrefs can't be turned into an ArgDyn"
 			)),

@@ -1,5 +1,8 @@
 use anyhow::{anyhow, Result};
 
+#[cfg(test)]
+mod tests;
+
 pub trait Engine: Default {
 	type Linker: Linker;
 

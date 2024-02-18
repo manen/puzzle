@@ -1,8 +1,4 @@
-mod wasm_trait;
-pub use wasm_trait::*;
-
-#[cfg(test)]
-mod tests;
+use wasm_trait::*;
 
 pub fn start<E: Engine>(wasm: &[u8]) -> anyhow::Result<()> {
 	let engine = E::default();

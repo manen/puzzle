@@ -13,3 +13,4 @@ log.workspace = true
 thiserror.workspace = true
 wasmtime.workspace = true
 runners.workspace = true
+wasm_trait.workspace = true
