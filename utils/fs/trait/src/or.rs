@@ -1,5 +1,3 @@
-use std::io;
-
 pub(crate) mod prelude {
 	pub use super::IntoSocketOr;
 }
@@ -9,25 +7,29 @@ pub enum SocketOr<A: crate::Socket, B: crate::Socket> {
 	A(A),
 	B(B),
 }
-impl<A: crate::Socket, B: crate::Socket> io::Write for SocketOr<A, B> {
-	fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
-		match self {
-			SocketOr::A(a) => a.write(buf),
-			SocketOr::B(b) => b.write(buf),
+impl<A: crate::Socket, B: crate::Socket> Socket for SocketOr<A, B> {
+	fn read(&mut self, buf: &mut [u8]) -> impl Future<Output = crate::Result<u32>> {
+		async move {
+			match self {
+				SocketOr::A(a) => a.read(buf).await,
+				SocketOr::B(b) => b.read(buf).await,
+			}
 		}
 	}
-	fn flush(&mut self) -> io::Result<()> {
-		match self {
-			SocketOr::A(a) => a.flush(),
-			SocketOr::B(b) => b.flush(),
+	fn size_hint(&mut self) -> impl Future<Output = Option<u32>> {
+		async move {
+			match self {
+				SocketOr::A(a) => a.size_hint().await,
+				SocketOr::B(b) => b.size_hint().await,
+			}
 		}
 	}
-}
-impl<A: crate::Socket, B: crate::Socket> io::Read for SocketOr<A, B> {
-	fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
-		match self {
-			SocketOr::A(a) => a.read(buf),
-			SocketOr::B(b) => b.read(buf),
+	fn write(&mut self, buf: &[u8]) -> impl Future<Output = crate::Result<u32>> {
+		async move {
+			match self {
+				SocketOr::A(a) => a.write(buf).await,
+				SocketOr::B(b) => b.write(buf).await,
+			}
 		}
 	}
 }
@@ -44,7 +46,10 @@ impl<S: crate::Socket> IntoSocketOr for S {}
 
 use std::error;
 use std::fmt::Debug;
+use std::future::Future;
 use thiserror::Error;
+
+use crate::Socket;
 
 #[derive(Error, Debug, Clone)]
 pub enum ErrorOr<A: error::Error + Debug, B: error::Error + Debug> {

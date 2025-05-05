@@ -1,4 +1,8 @@
-use std::{borrow::Cow, fmt::Debug};
+use std::{
+	borrow::Cow,
+	fmt::{Debug, Display},
+	io,
+};
 use thiserror::Error;
 
 pub mod prelude {
@@ -8,50 +12,71 @@ pub mod prelude {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Debug, Error)]
 pub enum Error {
-	#[error("{err} (propagated from: {original})")]
-	Propagated { err: Box<Error>, original: String },
+	#[error("io err: {err}")]
+	IoErr {
+		#[from]
+		err: crate::io_err::IoErr,
+	},
+	#[error("{original} (propagated from: {path})")]
+	Propagated { original: Box<Error>, path: String },
 	#[error("file or directory not found: {path_abs}")]
 	NotFound { path_abs: String },
 	#[error("attempted to open {path_abs} but it is a directory")]
 	DirOpen { path_abs: String },
 	#[error("not an absolute path: {path}")]
 	NotAbs { path: String },
+	#[error("error while {op}: empty socket")]
+	Empty { op: Operation },
+	#[error("attempted to write to readonly sock")]
+	ReadOnly,
+}
+impl From<io::Error> for Error {
+	fn from(value: io::Error) -> Self {
+		let io_err: crate::io_err::IoErr = value.into();
+		io_err.into()
+	}
 }
 pub type Result<T> = std::result::Result<T, Error>;
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[derive(Clone, Debug)]
+pub enum Operation {
+	Read,
+	Write,
+}
+impl Display for Operation {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+		// bit of an unorthodox implementation
+		match self {
+			Operation::Read => write!(f, "trying to read"),
+			Operation::Write => write!(f, "trying to write"),
+		}
+	}
+}
+
 pub trait Propagate: Sized {
-	fn propagate(self, path: &str) -> Self;
+	fn propagate<'a>(self, path: impl Into<Cow<'a, str>>) -> Self;
 }
 impl Propagate for Error {
-	fn propagate(self, path: &str) -> Self {
+	fn propagate<'a>(self, path: impl Into<Cow<'a, str>>) -> Self {
+		let path = path.into();
 		match self {
-			Error::Propagated { err, original } => Error::Propagated {
-				err: Box::new(err.propagate(path)),
+			Error::Propagated {
+				path: prop_path,
 				original,
+			} => Error::Propagated {
+				original,
+				path: format!("{path}{prop_path}"),
 			},
-			Error::NotFound { path_abs: original } => Error::Propagated {
-				err: Box::new(Error::NotFound {
-					path_abs: format!("{path}{original}"),
-				}),
-				original,
-			},
-			Error::DirOpen { path_abs: original } => Error::Propagated {
-				err: Box::new(Error::DirOpen {
-					path_abs: format!("{path}{original}"),
-				}),
-				original,
-			},
-			Error::NotAbs { path: original } => Error::Propagated {
-				err: Box::new(Error::NotAbs {
-					path: format!("{path}{original}"),
-				}),
-				original,
+			err => Error::Propagated {
+				original: Box::new(err),
+				path: path.to_string(),
 			},
 		}
 	}
 }
 impl<T, E: Propagate> Propagate for std::result::Result<T, E> {
-	fn propagate(self, path: &str) -> Self {
+	fn propagate<'a>(self, path: impl Into<Cow<'a, str>>) -> Self {
 		self.map_err(|err| err.propagate(path))
 	}
 }

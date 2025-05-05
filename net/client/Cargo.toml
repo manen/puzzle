@@ -11,6 +11,7 @@ anyhow.workspace = true
 
 [dependencies]
 bincode.workspace = true
+derive_more = "0.99.17"
 log.workspace = true
 net_common.workspace = true
 puzzle_common.workspace = true

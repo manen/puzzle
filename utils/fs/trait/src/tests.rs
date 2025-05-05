@@ -1,6 +1,6 @@
 use std::io;
 
-use crate::prelude::*;
+use crate::{prelude::*, socket::IntoSocket};
 
 #[tokio::main]
 #[test]
@@ -12,7 +12,7 @@ async fn empty() {
 #[test]
 async fn file_mount() {
 	let fs = crate::empty()
-		.mount_file("/csoki.txt", "csocs".as_bytes().read_only())
+		.mount_file("/csoki.txt", "csocs".into_socket())
 		.abs();
 
 	assert!(fs.open("csocs").await.is_err());
@@ -26,14 +26,11 @@ async fn file_mount() {
 #[test]
 async fn fs_mount() {
 	let inner = crate::empty()
-		.mount_file(
-			"/belso_geci.txt",
-			"ez egy mappaval bentebb van! wow!".as_bytes().read_only(),
-		)
+		.mount_file("/belso_geci.txt", "ez egy mappaval bentebb van! wow!")
 		.abs();
 	let a = crate::empty()
-		.mount_file("/csocs.txt", "lopocs".as_bytes().read_only())
-		.mount_file("/fasz.txt", "geci geci geci".as_bytes().read_only())
+		.mount_file("/csocs.txt", "lopocs")
+		.mount_file("/fasz.txt", "geci geci geci")
 		.mount_fs("/inner", inner)
 		.abs();
 
@@ -87,7 +84,7 @@ async fn ridiculously_complicated() {
 					"/peter_griffin",
 					crate::empty()
 						.mount_file("/name", b"peter".read_only())
-						.mount_file("/age", b"19".read_only()),
+						.mount_file("/age", "19".into_socket()),
 				),
 		);
 

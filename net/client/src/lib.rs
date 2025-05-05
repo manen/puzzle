@@ -1,3 +1,4 @@
+use derive_more::AsRef;
 use rust_socketio::{ClientBuilder, Payload, Socket};
 use thiserror::Error;
 
@@ -12,7 +13,9 @@ pub enum Error {
 }
 pub type Result<T> = std::result::Result<T, Error>;
 
+#[derive(AsRef)]
 pub struct Client {
+	#[as_ref]
 	socket: rust_socketio::client::Client,
 }
 impl Client {

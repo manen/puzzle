@@ -1,22 +1,19 @@
-use std::{
-	future::Future,
-	io::{Read, Write},
-};
+use std::future::Future;
 
 pub mod abs;
 pub mod empty;
 pub mod error;
 pub mod file_mount;
 pub mod fs_mount;
+pub mod io_err;
 pub mod or;
-pub mod quicksocket;
+pub mod socket;
 #[cfg(test)]
 mod tests;
 
 pub mod prelude {
 	pub use crate::error::prelude::*;
 	pub use crate::or::prelude::*;
-	pub use crate::quicksocket::prelude::*;
 	pub use crate::Fs;
 }
 
@@ -26,6 +23,8 @@ pub use error::{Error, Result};
 pub use file_mount::FileMount;
 use fs_mount::FsMount;
 pub use or::IntoSocketOr;
+use socket::IntoSocket;
+pub use socket::Socket;
 
 /// this trait is very much like `Iterator`, it defines some functions necessary for filesystem functions,
 /// and defines functions for modifying the current `Fs` fully functionally and at compile-time
@@ -40,7 +39,12 @@ pub trait Fs: Sized {
 
 	// - modifier functions
 	/// mount a file on top of this filesystem
-	fn mount_file<P: Into<String>, S: Socket>(self, path: P, socket: S) -> FileMount<Self, S> {
+	fn mount_file<P: Into<String>, S: IntoSocket>(
+		self,
+		path: P,
+		socket: S,
+	) -> FileMount<Self, S::Socket> {
+		let socket = socket.into_socket();
 		let path = path.into();
 		FileMount {
 			fs: self,
@@ -62,10 +66,3 @@ pub trait Fs: Sized {
 		Abs { fs: self }
 	}
 }
-
-/// socket should be deinit on drop, up for the implementation to.. implement
-///
-/// socket details: there is no write and read universal specification, every file/socket gets to decide what to do
-/// with its own writes and reads, they might append to a file, they might be sent over a network, they might be decoded and set as a variable for something who knows
-pub trait Socket: Write + Read {}
-impl<T: Write + Read> Socket for T {}

@@ -1,6 +1,6 @@
-use std::{io, iter};
+use std::iter;
 
-use crate::{Error, Fs, Result};
+use crate::{error::Operation, Error, Fs, Result, Socket};
 
 #[derive(Default, Clone, Copy, Debug)]
 pub struct EmptyFs;
@@ -32,26 +32,23 @@ impl Fs for EmptyFs {
 
 #[derive(Copy, Clone, Debug)]
 pub struct EmptySocket;
-impl io::Write for EmptySocket {
-	fn write(&mut self, _: &[u8]) -> io::Result<usize> {
-		Err(io::Error::new(
-			io::ErrorKind::Unsupported,
-			"emptysocket shouldn't be written to",
-		))
+impl Socket for EmptySocket {
+	fn read(&mut self, _: &mut [u8]) -> impl std::future::Future<Output = Result<u32>> {
+		async {
+			Err(Error::Empty {
+				op: Operation::Read,
+			})
+		}
 	}
-	fn flush(&mut self) -> io::Result<()> {
-		Err(io::Error::new(
-			io::ErrorKind::Unsupported,
-			"emptysocket shouldn't be written to",
-		))
+	fn size_hint(&mut self) -> impl std::future::Future<Output = Option<u32>> {
+		async { None }
 	}
-}
-impl io::Read for EmptySocket {
-	fn read(&mut self, _: &mut [u8]) -> io::Result<usize> {
-		Err(io::Error::new(
-			io::ErrorKind::Unsupported,
-			"emptysocket shouldn't be read from",
-		))
+	fn write(&mut self, _: &[u8]) -> impl std::future::Future<Output = Result<u32>> {
+		async {
+			Err(Error::Empty {
+				op: Operation::Write,
+			})
+		}
 	}
 }
 
