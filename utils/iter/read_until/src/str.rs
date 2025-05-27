@@ -2,8 +2,8 @@ use crate::{IntoReader, Read, Reader};
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct StrReader<'a> {
-	s: &'a str, // TODO rewrite this to use str.chars()
-	i: usize,
+	pub s: &'a str, // TODO rewrite this to use str.chars()
+	pub i: usize,
 }
 impl<'a> Reader<'a> for StrReader<'a> {
 	type Item = u8;
