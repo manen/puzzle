@@ -8,7 +8,7 @@ impl<'a, T> Reader<'a> for SliceReader<'a, T> {
 	type Item = T;
 	type Output = &'a [T];
 
-	fn read_until<F: Fn(&T) -> bool>(&mut self, f: F) -> Read<&'a [T]> {
+	fn read_until<F: FnMut(&T) -> bool>(&mut self, mut f: F) -> Read<&'a [T]> {
 		if self.i >= self.slice.len() {
 			return Read::Finished;
 		}

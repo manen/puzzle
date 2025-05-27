@@ -10,7 +10,7 @@ where
 	type Item = I::Item;
 	type Output = Vec<I::Item>;
 
-	fn read_until<F: Fn(&Self::Item) -> bool>(&mut self, f: F) -> Read<Self::Output> {
+	fn read_until<F: FnMut(&Self::Item) -> bool>(&mut self, mut f: F) -> Read<Self::Output> {
 		let mut buf = Vec::new();
 
 		for item in &mut self.iter {
